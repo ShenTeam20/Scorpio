@@ -1,5 +1,8 @@
 package auto;
 
+/**
+ * @author Team 20
+ */
 import org.usfirst.frc.team20.robot.Scorpio;
 import org.usfirst.frc.team20.robot.Team20Libraries.REVDigitBoard;
 
