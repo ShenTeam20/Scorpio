@@ -25,7 +25,7 @@ public class Drivetrain extends Scorpio {
 		ROBOT_CENTRIC, FIELD_CENTRIC, CAMERA_TARGET
 	}
 
-	public driveModes driveMode = driveModes.ROBOT_CENTRIC;
+	public driveModes driveMode = driveModes.FIELD_CENTRIC;
 
 	public Drivetrain() {
 		followerLeft.changeControlMode(TalonControlMode.Follower);
@@ -83,6 +83,7 @@ public class Drivetrain extends Scorpio {
 	}
 
 	private void driveCamera(double speed) {
+		speed = -speed;
 		getCameraValues();
 		double cameraSpan = 0.09;
 		double hoodSetpoint = -70;
@@ -96,16 +97,16 @@ public class Drivetrain extends Scorpio {
 		}
 		headingSetpoint = (headingSetpoint * .9)
 				+ ((ahrs.ahrs.getAngle() + ((recCenterX + (width * .61)) * cameraSpan)) * .1);
-		System.out.println("                               " + headingSetpoint);
+		System.out.println("                               " + recCenterY);
 		if (vision.vision.targetAquired) {
 			hood.setAutoTargetHood_PV_SP(recCenterY, hoodSetpoint);
-			hood.moveHoodPositon(-hood.getAutoTargetHood_OP());
+			hood.moveHoodPVbus(-hood.getAutoTargetHood_OP());
 			drivetrainHeadingPID.setSP(headingSetpoint);
 			drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
 		} else {
 			hood.setAutoTargetHood_PV_SP(hoodSetpoint, hoodSetpoint);
-			hood.moveHoodPositon(-hood.getAutoTargetHood_OP());
-			drivetrainHeadingPID.setPV(headingSetpoint);
+			hood.moveHoodPVbus(-hood.getAutoTargetHood_OP());
+			drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
 		}
 		masterRight.set((-1 * speed + -drivetrainHeadingPID.getOP()) * scaling);
 		masterLeft.set(((speed) + (-drivetrainHeadingPID.getOP())) * scaling);

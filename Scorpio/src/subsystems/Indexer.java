@@ -1,11 +1,12 @@
 package subsystems;
 
 import org.usfirst.frc.team20.robot.Constants;
+import org.usfirst.frc.team20.robot.Scorpio;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
 
-public class Indexer {
+public class Indexer extends Scorpio {
 
 	private Talon indexerTalon = new Talon(Constants.INDEXER_MOTOR_PORT);
 	private DigitalInput indexerBumpSwitch = new DigitalInput(Constants.INDEXER_BUMP_SWITCH_PORT);
@@ -28,6 +29,7 @@ public class Indexer {
 	public void indexerBumpSwitchWatchDog() {
 		if (!indexerBumpSwitch.get()) {
 			stopIndexer();
+			lance.stopIntake();
 		}
 	}
 }

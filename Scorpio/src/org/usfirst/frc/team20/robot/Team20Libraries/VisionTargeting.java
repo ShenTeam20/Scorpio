@@ -191,6 +191,8 @@ public class VisionTargeting {
 		boolean targetOk = false;
 		double thisHeight;
 		double thisWidth;
+		double bestCenter = 500;
+		double tempCenter = 0;
 		double thisOnOffRatio = 0;
 		double aspectRatio = 0;
 		double onOffRatio = 0;
@@ -208,15 +210,17 @@ public class VisionTargeting {
 					NIVision.MeasurementType.MT_BOUNDING_RECT_RIGHT);
 			onOffRatio = par.Area / (Math.abs(par.BoundingRectLeft - par.BoundingRectRight)
 					* Math.abs(par.BoundingRectBottom - par.BoundingRectTop));
+			tempCenter = ((par.BoundingRectLeft - horizontalImage) - (par.BoundingRectRight - horizontalImage));
 			if (onOffRatio > thisOnOffRatio) {
 				thisWidth = Math.abs(par.BoundingRectLeft - par.BoundingRectRight);
 				thisHeight = Math.abs(par.BoundingRectBottom - par.BoundingRectTop);
 				aspectRatio = thisHeight / thisWidth;
-				if (thisWidth > 30 && thisWidth < 117 && par.PercentAreaToImageArea < .6 && onOffRatio < .25
-						&& aspectRatio > .3 && aspectRatio < .9) {
+				if ((thisWidth > 30 && thisWidth < 117 && par.PercentAreaToImageArea < .6 && onOffRatio < .25
+						&& aspectRatio > .3 && aspectRatio < .9) && betterCenter(tempCenter, bestCenter, width, 0)) {
 					// System.out.println(onOffRatio + " " + thisWidth + " " +
 					// aspectRatio);
 					width = thisWidth;
+					bestCenter = tempCenter;
 					onOffRatio = thisOnOffRatio;
 					Rect r = new NIVision.Rect((int) par.BoundingRectTop, (int) par.BoundingRectLeft,
 							Math.abs((int) (par.BoundingRectTop - par.BoundingRectBottom)),
@@ -240,6 +244,13 @@ public class VisionTargeting {
 			}
 		} // for
 		targetAquired = targetOk;
+	}
+
+	private boolean betterCenter(double newLoc, double loc, double width, double setpoint) {
+		double targetLoc = (width * .6) + setpoint;
+		if (Math.abs(newLoc - targetLoc) < Math.abs(loc - targetLoc))
+			return true;
+		return false;
 	}
 
 	private void drawCenterCrosshairs() {

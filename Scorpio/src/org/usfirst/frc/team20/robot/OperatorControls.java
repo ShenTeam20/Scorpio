@@ -17,14 +17,14 @@ public class OperatorControls extends Scorpio {
 		indexer.indexerBumpSwitchWatchDog();
 		hood.hoodHomeWatchdog();
 		lance.lanceMovementWatchDog();
+		// lance.lanceSensors();
 
 		// Lance controls
-		if (operatorJoy.getAxisTrigger() > -.9 && lance.getMagSwitchIsExtened()) {
+		if (operatorJoy.getOneShotButtonLB()) {
 			lance.toggleLance();
-		}
-
-		if (operatorJoy.getOneShotButtonLB() && !lance.getMagSwitchIsExtened()) {
-			lance.toggleLance();
+			if (!lance.getMagSwitchIsExtened()) {
+				tempHoodPos = hood.HOOD_POS_SAFE;
+			}
 		}
 
 		if (operatorJoy.getOneShotButtonY()) {

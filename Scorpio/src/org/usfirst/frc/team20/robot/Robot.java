@@ -1,34 +1,41 @@
 
 package org.usfirst.frc.team20.robot;
 
-import org.usfirst.frc.team20.robot.Team20Libraries.REVDigitBoard;
-
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends IterativeRobot {
 
-	REVDigitBoard revDB = new REVDigitBoard();
+	// AutoModeChooser auto = new AutoModeChooser();
 
 	public void robotInit() {
-		revDB.clear();
+		// auto.clearRevBoard();
+		Scorpio.poke();
+		Scorpio.vision.start();
 	}
 
 	public void disabledInit() {
-		revDB.clear();
+		// auto.clearRevBoard();
 		Scorpio.poke();
-		// Scorpio.vision.start();
 	}
 
 	public void disabledPeriodic() {
-
-		// System.out.println(Scorpio.ahrs.ahrs.getAngle());
+		// auto.revBoardHandler();
+		// auto.displayRevBoardNum();
 	}
 
 	public void autonomousInit() {
+		// Scorpio.autoModes.createTransformersRollOut();
+		// Scorpio.autoModes.createTransformersTransform();
+		// Scorpio.autoModes.createDriveStraightTime(1, 2);
+		Scorpio.autoModes.createLowBar();
 	}
 
 	public void autonomousPeriodic() {
-		double temp;
+		// Scorpio.autoModes.executeTransformersRollOut();
+		// Scorpio.autoModes.executeTransformersTransform();
+		// Scorpio.autoModes.executeDriveStraightTime();
+		Scorpio.autoModes.executeLowBar();
 	}
 
 	public void teleopPeriodic() {

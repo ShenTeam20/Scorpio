@@ -31,6 +31,10 @@ public class Lance {
 
 	}
 
+	public void lanceSensors() {
+		System.out.println(magSwitchLeft.get() + "    " + magSwitchRight.get() + "    " + magSwitchIsExtened.get());
+	}
+
 	public boolean getMagSwitchIsExtened() {
 		return magSwitchIsExtened.get();
 	}
@@ -65,13 +69,13 @@ public class Lance {
 	}
 
 	public void intakeLance() {
-		collectorMotor.set(1);
-		collectorMotor2.set(1);
+		collectorMotor.set(-1);
+		collectorMotor2.set(-1);
 	}
 
 	public void backDrive() {
-		collectorMotor.set(-1);
-		collectorMotor2.set(-1);
+		collectorMotor.set(1);
+		collectorMotor2.set(1);
 	}
 
 	public void stopIntake() {

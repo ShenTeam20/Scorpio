@@ -4,6 +4,7 @@ import org.usfirst.frc.team20.robot.Team20Libraries.AHRSGyro;
 import org.usfirst.frc.team20.robot.Team20Libraries.VisionThread;
 
 import auto.AutoModeChooser;
+import auto.AutoModes;
 import subsystems.*;
 
 public class Scorpio extends Constants {
@@ -27,7 +28,8 @@ public class Scorpio extends Constants {
 	protected static AHRSGyro ahrs = new AHRSGyro(); // Done
 
 	// Auto
-	protected static AutoModeChooser autoModeChooser = new AutoModeChooser();
+	// protected static AutoModeChooser autoModeChooser = new AutoModeChooser();
+	protected static AutoModes autoModes = new AutoModes();
 
 	// Human Controls
 	protected static OperatorControls operator = new OperatorControls(); // Done
