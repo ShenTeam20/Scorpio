@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class Flywheel extends Scorpio {
 
-	public final double FLYSPEED_OUTERWORKS = 3700, FLYSPEED_BATTER = 3200, FLYSPEED_STOP = 0;
+	public final double FLYSPEED_OUTERWORKS = 3900, FLYSPEED_BATTER = 3200, FLYSPEED_STOP = 0;
 
 	private T20CANTalon flywheelTalon = new T20CANTalon(Constants.FLYWHEEL_MOTOR_PORT);
 

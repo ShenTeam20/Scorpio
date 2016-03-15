@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class Hood {
 
-	public final double HOOD_POS_OUTERWORKS = 479225, HOOD_POS_BATTER = 668800, HOOD_POS_SAFE = 252346;
+	public final double HOOD_POS_OUTERWORKS = 567783, HOOD_POS_BATTER = 650000, HOOD_POS_SAFE = 252346;
 	private double hoodCurrent = 0;
 	private double hoodOperationCurrentLimit = 10;
 	private double hoodHomingCurrentLimit = 5;

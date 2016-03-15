@@ -11,7 +11,14 @@ public class AutoModes extends Scorpio {
 
 	private T20Node rollOutTree;
 
-	public void createTransformersRollOut() {
+	/**
+	 * Sets up robot to go under the low bar or portcullis<br>
+	 * <br>
+	 * 
+	 * @return a rollOut node
+	 */
+
+	public void createAutoBotsTransformRollOut() {
 		rollOutTree = new T20SeriesNode();
 		rollOutTree.addChild(new T20AutoCommandTomahawksDown());
 		rollOutTree.addChild(new T20AutoCommandHomeHood());
@@ -22,51 +29,105 @@ public class AutoModes extends Scorpio {
 		rollOutTree.addChild(secondaryRollOut);
 	}
 
-	public void executeTransformersRollOut() {
+	/**
+	 * Sets up robot to go under the low bar or portcullis<br>
+	 * <br>
+	 * 
+	 * @return a rollOut node
+	 */
+
+	public void executeAutoBotsTransformRollOut() {
 		rollOutTree.execute();
 	}
 
-	private T20Node transformTree;
+	private T20Node transformConcealTree;
 
-	public void createTransformersTransform() {
-		transformTree = new T20SeriesNode();
-		transformTree.addChild(new T20AutoCommandHoodToSafePosition());
-		transformTree.addChild(new T20AutoCommandHomeHood());
-		transformTree.addChild(new T20AutoCommandToggleLance());
-		T20Node secondaryTranform = new T20ParallelNode();
-		secondaryTranform.addChild(new T20AutoCommandLanceUp());
-		secondaryTranform.addChild(new T20AutoCommandHoodToSafePosition());
-		secondaryTranform.addChild(new T20AutoCommandTomahawksUp());
-		transformTree.addChild(secondaryTranform);
+	/**
+	 * Sets up robot to go over B and D defenses<br>
+	 * <br>
+	 * 
+	 * @return a conceal node
+	 */
+
+	public void createAutoBotsTransformConceal() {
+		transformConcealTree = new T20SeriesNode();
+		transformConcealTree.addChild(new T20AutoCommandHoodToSafePosition());
+		transformConcealTree.addChild(new T20AutoCommandHomeHood());
+		transformConcealTree.addChild(new T20AutoCommandToggleLance());
+		T20Node secondaryTranformConceal = new T20ParallelNode();
+		secondaryTranformConceal.addChild(new T20AutoCommandLanceUp());
+		secondaryTranformConceal.addChild(new T20AutoCommandHoodToSafePosition());
+		secondaryTranformConceal.addChild(new T20AutoCommandTomahawksUp());
+		transformConcealTree.addChild(secondaryTranformConceal);
 	}
 
-	public void executeTransformersTransform() {
-		transformTree.execute();
+	/**
+	 * Sets up robot to go over B and D defenses<br>
+	 * <br>
+	 * 
+	 * @return a conceal node
+	 */
+
+	public void executeAutoBotsTransformConceal() {
+		transformConcealTree.execute();
 	}
 
-	private T20Node driveStraightTimeTree;
+	private T20Node lowBarHighGoalTree;
 
-	public void createDriveStraightTime(double speed, double time) {
-		driveStraightTimeTree = new T20SeriesNode();
-		driveStraightTimeTree.addChild(new T20AutoCommandDriveStraightTime(1, 2));
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a low bar high goal auto
+	 */
+
+	public void createLowBarHighGoal() {
+		createAutoBotsTransformRollOut();
+		lowBarHighGoalTree = new T20SeriesNode();
+		lowBarHighGoalTree.addChild(rollOutTree);
+		lowBarHighGoalTree.addChild(new T20AutoCommandDriveStraightEncoder(1, -37000));
+		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.5, 7));
+		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.4, 45));
+		lowBarHighGoalTree.addChild(new T20AutoCommandHoodToOuterworksPosition());
+		lowBarHighGoalTree.addChild(new T20AutoAutoTarget());
+
 	}
 
-	public void executeDriveStraightTime() {
-		driveStraightTimeTree.execute();
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a low bar high goal auto
+	 */
+
+	public void executeLowBarHighGoal() {
+		lowBarHighGoalTree.execute();
 	}
 
-	private T20Node lowBarTree;
+	private T20Node crossBAndD;
 
-	public void createLowBar() {
-		createTransformersRollOut();
-		lowBarTree = new T20SeriesNode();
-		lowBarTree.addChild(rollOutTree);
-		lowBarTree.addChild(new T20AutoCommandDriveStraightTime(1, 1.9));
-		lowBarTree.addChild(new T20AutoCommandTurnToAngle(45));
+	/**
+	 * Drives the robot over a B or D defense <br>
+	 * <br>
+	 * 
+	 * @return a cross B and D node
+	 */
+
+	public void createCrossBAndD(double speed, double time, double angle) {
+		crossBAndD = new T20SeriesNode();
+		crossBAndD.addChild(new T20AutoCommandDriveStraightTime(speed, time));
+		crossBAndD.addChild(new T20AutoCommandTurnToAngle(angle));
 	}
 
-	public void executeLowBar() {
-		lowBarTree.execute();
+	/**
+	 * Drives the robot over a B or D defense <br>
+	 * <br>
+	 * 
+	 * @return a cross B and D node
+	 */
+
+	public void executeCrossBAndD() {
+		crossBAndD.execute();
 	}
 
 }

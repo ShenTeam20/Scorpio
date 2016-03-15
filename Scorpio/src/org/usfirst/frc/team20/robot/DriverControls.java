@@ -17,6 +17,8 @@ public class DriverControls extends Scorpio {
 	private long mills = 0;
 
 	public void driverControls() {
+		System.out
+				.println("              " + drivetrain.getLeftSideEncVal() + "     " + drivetrain.getRightSideEncVal());
 		if (Math.abs(driverJoy.getAxisTrigger()) > 0.2 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			drivetrain.setRobotCentric();
 			heading = drivetrain.getHeading();
@@ -47,6 +49,11 @@ public class DriverControls extends Scorpio {
 
 		if (driverJoy.getOneShotButtonBack()) {
 			ahrs.ahrs.reset();
+			heading = 0;
+		}
+
+		if (driverJoy.getOneShotButtonA()) {
+			drivetrain.resetEncoders();
 		}
 
 		if (drivetrain.driveMode == driveModes.ROBOT_CENTRIC) {

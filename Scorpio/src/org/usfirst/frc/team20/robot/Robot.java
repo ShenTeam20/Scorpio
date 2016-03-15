@@ -8,6 +8,8 @@ public class Robot extends IterativeRobot {
 
 	// AutoModeChooser auto = new AutoModeChooser();
 
+	Timer resetTimer = new Timer();
+
 	public void robotInit() {
 		// auto.clearRevBoard();
 		Scorpio.poke();
@@ -15,27 +17,28 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void disabledInit() {
+		Scorpio.ahrs.ahrs.reset();
+		resetTimer.start();
 		// auto.clearRevBoard();
 		Scorpio.poke();
 	}
 
 	public void disabledPeriodic() {
+		if (resetTimer.get() > 30) {
+			Scorpio.ahrs.ahrs.reset();
+			resetTimer.reset();
+		}
 		// auto.revBoardHandler();
 		// auto.displayRevBoardNum();
 	}
 
 	public void autonomousInit() {
-		// Scorpio.autoModes.createTransformersRollOut();
-		// Scorpio.autoModes.createTransformersTransform();
-		// Scorpio.autoModes.createDriveStraightTime(1, 2);
-		Scorpio.autoModes.createLowBar();
+		Scorpio.ahrs.ahrs.reset();
+		Scorpio.autoModes.createLowBarHighGoal();
 	}
 
 	public void autonomousPeriodic() {
-		// Scorpio.autoModes.executeTransformersRollOut();
-		// Scorpio.autoModes.executeTransformersTransform();
-		// Scorpio.autoModes.executeDriveStraightTime();
-		Scorpio.autoModes.executeLowBar();
+		Scorpio.autoModes.executeLowBarHighGoal();
 	}
 
 	public void teleopPeriodic() {

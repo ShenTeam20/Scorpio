@@ -498,7 +498,6 @@ public class T20GamePad {
 
 	public void setLeftStickAngle(double angle) {
 		leftStickNeutral = angle;
-		// Did you know that Mr.Knox loves Frank Sinatra
 	}
 
 	/**

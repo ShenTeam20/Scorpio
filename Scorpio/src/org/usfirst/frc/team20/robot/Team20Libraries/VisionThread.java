@@ -2,7 +2,7 @@ package org.usfirst.frc.team20.robot.Team20Libraries;
 
 public class VisionThread extends Thread {
 
-	public VisionTargeting vision = new VisionTargeting();
+	public VisionTargeting2 vision = new VisionTargeting2();
 
 	public VisionThread() {
 		vision.init();

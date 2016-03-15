@@ -5,14 +5,15 @@ import org.usfirst.frc.team20.robot.Team20Libraries.T20Command;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class T20AutoCommandTurnToAngle extends Scorpio implements T20Command {
+public class T20AutoCommandArcTurnToAngle extends Scorpio implements T20Command {
 	private boolean isFinished, isStarted;
-	private double angle, heading, sysTime;
+	private double angle, heading, sysTime, speed;
 
-	public T20AutoCommandTurnToAngle(double angle) {
+	public T20AutoCommandArcTurnToAngle(double speed, double angle) {
 		this.isFinished = false;
 		this.isStarted = false;
 		this.angle = angle;
+		this.speed = -speed;
 	}
 
 	@Override
@@ -23,8 +24,8 @@ public class T20AutoCommandTurnToAngle extends Scorpio implements T20Command {
 
 		if (!isStarted) {
 			System.out.println("<Turn To Heading: " + this.heading + ">");
-			isStarted = !isStarted;
 			drivetrain.setFieldCentric();
+			isStarted = !isStarted;
 			heading = ahrs.ahrs.getAngle();
 			heading += angle;
 			if (heading > 360) {
@@ -35,13 +36,14 @@ public class T20AutoCommandTurnToAngle extends Scorpio implements T20Command {
 			}
 		}
 
-		drivetrain.drive(0, this.heading);
+		drivetrain.drive(this.speed, this.heading);
 
 		if (Math.abs(heading - ahrs.ahrs.getAngle()) > 2) {
 			sysTime = System.currentTimeMillis();
 		}
 
 		if (Math.abs(heading - ahrs.ahrs.getAngle()) < 2 && System.currentTimeMillis() > sysTime + 500) {
+			drivetrain.drive(0, this.heading);
 			System.out.println("</Turn To Heading: " + this.heading + ">");
 			this.isFinished = true;
 		}
@@ -55,7 +57,7 @@ public class T20AutoCommandTurnToAngle extends Scorpio implements T20Command {
 	@Override
 	public T20Command copy() {
 		// Don't use this
-		return new T20AutoCommandTurnToAngle(this.heading);
+		return new T20AutoCommandArcTurnToAngle(this.speed, this.heading);
 	}
 
 }

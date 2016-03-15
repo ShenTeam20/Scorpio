@@ -80,6 +80,7 @@ public class VisionTargeting2 {
 	boolean cameraWorks = true;
 	public double width;
 	double height;
+	Rect r;
 
 	public boolean targetAquired = false;
 
@@ -103,9 +104,12 @@ public class VisionTargeting2 {
 
 			// 3:22
 
+			// TARGET_HUE_RANGE = new NIVision.Range(71, 132);
+			// TARGET_SAT_RANGE = new NIVision.Range(236, 255);
+			// TARGET_VAL_RANGE = new NIVision.Range(135, 238);
 			TARGET_HUE_RANGE = new NIVision.Range(71, 132);
-			TARGET_SAT_RANGE = new NIVision.Range(236, 255);
-			TARGET_VAL_RANGE = new NIVision.Range(135, 238);
+			TARGET_SAT_RANGE = new NIVision.Range(128, 255);
+			TARGET_VAL_RANGE = new NIVision.Range(165, 255);
 
 			// filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			width = 0;
@@ -187,6 +191,13 @@ public class VisionTargeting2 {
 		NIVision.imaqDrawShapeOnImage(binaryFrame, binaryFrame, r, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 150f);
 	}
 
+	private boolean betterCenter(double newLoc, double loc, double width, double setpoint) {
+		double targetLoc = (width * .6) + setpoint;
+		if (Math.abs(newLoc - targetLoc) < Math.abs(loc - targetLoc))
+			return true;
+		return false;
+	}
+
 	private void drawRectangle() {
 		width = 0;
 		height = 0;
@@ -196,9 +207,10 @@ public class VisionTargeting2 {
 		double thisOnOffRatio = 0;
 		double aspectRatio = 0;
 		ParticleReport par[] = new ParticleReport[numParticles];
+		// System.out.println(numParticles);
 
 		for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {
-
+			par[particleIndex] = new ParticleReport();
 			par[particleIndex].Area = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
 					NIVision.MeasurementType.MT_AREA);
 			par[particleIndex].BoundingRectTop = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
@@ -213,14 +225,15 @@ public class VisionTargeting2 {
 					/ (Math.abs(par[particleIndex].BoundingRectLeft - par[particleIndex].BoundingRectRight)
 							* Math.abs(par[particleIndex].BoundingRectBottom - par[particleIndex].BoundingRectTop));
 		}
-
+		double bestCenterRec = 0;
 		for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {
 
 			thisWidth = Math.abs(par[particleIndex].BoundingRectLeft - par[particleIndex].BoundingRectRight);
 			thisHeight = Math.abs(par[particleIndex].BoundingRectBottom - par[particleIndex].BoundingRectTop);
 			aspectRatio = thisHeight / thisWidth;
-			if (thisWidth > 30 && thisWidth < 117 && par[particleIndex].PercentAreaToImageArea < .6
-					&& par[particleIndex].AreaRatio < .25 && aspectRatio > .3 && aspectRatio < .9) {
+			if (thisWidth > 30 && thisWidth < 117 && par[particleIndex].AreaRatio < .33 && aspectRatio > .3
+					&& aspectRatio < 1.5) {
+				// System.out.println("<in if>");
 				// Here we have a valid candidate.
 				double tempLeftRec, tempRightRec, tempTopRec, tempBottomRec;
 				tempLeftRec = par[particleIndex].BoundingRectLeft - horizontalImage;
@@ -228,46 +241,42 @@ public class VisionTargeting2 {
 				tempTopRec = -(par[particleIndex].BoundingRectTop - verticalImage);
 				tempBottomRec = -(par[particleIndex].BoundingRectBottom - verticalImage);
 
-				double tempcenterRec[] = new double[2];
 				double bestDistance = 0;
 				double tempDistance;
+				double tempCenterRec = (tempLeftRec + tempRightRec) / 2;
 
-				tempcenterRec[0] = (tempLeftRec + tempRightRec) / 2;
-				tempcenterRec[1] = (tempTopRec + tempBottomRec) / 2;
-
-				tempDistance = (tempcenterRec[1] * tempcenterRec[1] + tempcenterRec[0] * tempcenterRec[0]);
-
-				if (!targetOk || tempDistance < bestDistance) {
+				if (!targetOk || betterCenter(tempCenterRec, bestCenterRec, thisWidth, 0)) {
 					// System.out.println(onOffRatio + " " + thisWidth + " " +
 					// aspectRatio);
 					width = thisWidth;
 					par[particleIndex].AreaRatio = thisOnOffRatio;
-					Rect r = new NIVision.Rect((int) par[particleIndex].BoundingRectTop,
-							(int) par[particleIndex].BoundingRectLeft,
-							Math.abs(
-									(int) (par[particleIndex].BoundingRectTop - par[particleIndex].BoundingRectBottom)),
-							Math.abs((int) (par[particleIndex].BoundingRectLeft
-									- par[particleIndex].BoundingRectRight)));
-					NIVision.imaqDrawShapeOnImage(binaryFrame, binaryFrame, r, DrawMode.DRAW_VALUE,
-							ShapeMode.SHAPE_RECT, 150f);
 					targetOk = true;
 					// centerRec = new double[2];
-					bestDistance = tempDistance;
+					bestCenterRec = tempCenterRec;
 					boundingRight = par[particleIndex].BoundingRectRight;
 					boundingLeft = par[particleIndex].BoundingRectLeft;
-					boundingTop = par[particleIndex].BoundingRectTop;
+					boundingTop = -(par[particleIndex].BoundingRectTop - verticalImage);
 					boundingBottom = par[particleIndex].BoundingRectBottom;
 					leftRec = tempLeftRec;
 					rightRec = tempRightRec;
 					topRec = tempTopRec;
 					bottomRec = tempBottomRec;
-					centerRec[0] = tempcenterRec[0];
-					centerRec[1] = tempcenterRec[1];
 					height = Math.abs(par[particleIndex].BoundingRectBottom - par[particleIndex].BoundingRectTop);
+					r = new NIVision.Rect((int) par[particleIndex].BoundingRectTop,
+							(int) par[particleIndex].BoundingRectLeft,
+							Math.abs(
+									(int) (par[particleIndex].BoundingRectTop - par[particleIndex].BoundingRectBottom)),
+							Math.abs((int) (par[particleIndex].BoundingRectLeft
+									- par[particleIndex].BoundingRectRight)));
 				}
 			}
 
 		} // for
+		if (targetOk) {
+			NIVision.imaqDrawShapeOnImage(binaryFrame, binaryFrame, r, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 150f);
+			centerRec[0] = bestCenterRec;
+			centerRec[1] = boundingTop;
+		}
 		targetAquired = targetOk;
 	}
 
@@ -305,7 +314,7 @@ public class VisionTargeting2 {
 		double Tpixel = Math.abs(boundingLeft - boundingRight);
 		double FOVpixel = (horizontalPixel * Tft) / (2 * Tpixel);
 		distance = FOVpixel / Math.tan((44.10524987 * (Math.PI / 180)) / 2);
-		System.out.println("Distance: " + distance);
+		// System.out.println("Distance: " + distance);
 		return distance;
 	}
 
@@ -315,7 +324,7 @@ public class VisionTargeting2 {
 		double Tpixel = Math.abs(boundingTop - boundingBottom);
 		double FOVpixel = (verticalPixel * TftV) / (2 * Tpixel);
 		distance = FOVpixel / Math.tan((46 * (Math.PI / 180)) / 2);
-		System.out.println("Vertical Distance: " + distance);
+		// System.out.println("Vertical Distance: " + distance);
 		return distance;
 	}
 
@@ -330,12 +339,12 @@ public class VisionTargeting2 {
 	}
 
 	public double recCenterXCoordinate() {
-		Point recCenter = new NIVision.Point((int) (centerRec[0]), (int) (topRec));
+		Point recCenter = new NIVision.Point((int) (centerRec[0]), (int) (centerRec[1]));
 		return recCenter.x;
 	}
 
 	public double recCenterYCoordinate() {
-		Point recCenter = new NIVision.Point((int) (centerRec[0]), (int) (topRec));
+		Point recCenter = new NIVision.Point((int) (centerRec[0]), (int) (centerRec[1]));
 		return recCenter.y;
 	}
 
@@ -359,7 +368,7 @@ public class VisionTargeting2 {
 		double pixel = Math.abs(0 - recCenterXCoordinate());
 		double feet = (Tft * pixel) / Tpixels;
 		angle = Math.atan(feet / getDistance()) * (180 / Math.PI);
-		System.out.println("					" + angle);
+		// System.out.println(" " + angle);
 		return angle;
 	}
 

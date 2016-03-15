@@ -25,6 +25,7 @@ public class T20AutoCommandDriveStraightTime extends Scorpio implements T20Comma
 
 		if (!isStarted) {
 			System.out.println("<Drive Straight At Speed: " + this.speed + " For Time: " + this.time + ">");
+			drivetrain.setFieldCentric();
 			isStarted = !isStarted;
 			heading = ahrs.ahrs.getAngle();
 			driveTimer.start();

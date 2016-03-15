@@ -17,6 +17,8 @@ public class OperatorControls extends Scorpio {
 		indexer.indexerBumpSwitchWatchDog();
 		hood.hoodHomeWatchdog();
 		lance.lanceMovementWatchDog();
+		// flywheel.getSpeed();
+		// System.out.println(" "+hood.getHoodEnc());
 		// lance.lanceSensors();
 
 		// Lance controls
@@ -61,6 +63,10 @@ public class OperatorControls extends Scorpio {
 		}
 
 		// Hood controls
+		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && Math.abs(operatorJoy.getAxisRightStickY()) > .2) {
+			tempHoodPos += (10000 * operatorJoy.getAxisRightStickY());
+		}
+
 		if (operatorJoy.getPOV() == 270) {
 			tempHoodPos = hood.HOOD_POS_OUTERWORKS;
 			tempFlyspeed = flywheel.FLYSPEED_OUTERWORKS;

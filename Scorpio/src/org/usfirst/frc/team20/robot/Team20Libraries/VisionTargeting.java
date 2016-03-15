@@ -102,8 +102,8 @@ public class VisionTargeting {
 			// 3:22
 
 			TARGET_HUE_RANGE = new NIVision.Range(71, 132);
-			TARGET_SAT_RANGE = new NIVision.Range(236, 255);
-			TARGET_VAL_RANGE = new NIVision.Range(135, 238);
+			TARGET_SAT_RANGE = new NIVision.Range(128, 255);
+			TARGET_VAL_RANGE = new NIVision.Range(165, 255);
 
 			// filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			width = 0;
@@ -200,6 +200,8 @@ public class VisionTargeting {
 			ParticleReport par = new ParticleReport();
 			par.Area = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
 					NIVision.MeasurementType.MT_AREA);
+			System.out.println("            " + NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
+					NIVision.MeasurementType.MT_AREA));
 			par.BoundingRectTop = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
 					NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
 			par.BoundingRectLeft = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
@@ -211,6 +213,8 @@ public class VisionTargeting {
 			onOffRatio = par.Area / (Math.abs(par.BoundingRectLeft - par.BoundingRectRight)
 					* Math.abs(par.BoundingRectBottom - par.BoundingRectTop));
 			tempCenter = ((par.BoundingRectLeft - horizontalImage) - (par.BoundingRectRight - horizontalImage));
+			System.out.println( (Math.abs(par.BoundingRectLeft - par.BoundingRectRight)
+					* Math.abs(par.BoundingRectBottom - par.BoundingRectTop)));
 			if (onOffRatio > thisOnOffRatio) {
 				thisWidth = Math.abs(par.BoundingRectLeft - par.BoundingRectRight);
 				thisHeight = Math.abs(par.BoundingRectBottom - par.BoundingRectTop);
