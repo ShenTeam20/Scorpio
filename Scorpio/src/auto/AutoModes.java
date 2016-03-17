@@ -130,4 +130,47 @@ public class AutoModes extends Scorpio {
 		crossBAndD.execute();
 	}
 
+	private T20Node mainAutoNode;
+
+	public void createMainAutoMode() {
+		mainAutoNode = new T20SeriesNode();
+		switch (autoModeChooser.temp) {
+		case "0.00":
+			mainAutoNode.addChild(new T20AutoCommandDoNothing());
+			break;
+		case "0.01":
+			break;
+		case "0.02":
+			break;
+		case "0.03":
+			break;
+		case "0.04":
+			break;
+		case "0.05":
+			break;
+		case "0.06":
+			break;
+		case "0.07":
+			createLowBarHighGoal();
+			mainAutoNode.addChild(lowBarHighGoalTree);
+			break;
+		case "0.08":
+			break;
+		case "0.09":
+			break;
+		case "0.10":
+			break;
+		case "0.11":
+			break;
+		case "0.12":
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void executeMainAutoMode() {
+		mainAutoNode.execute();
+	}
+
 }

@@ -11,6 +11,7 @@ public class AutoModeChooser extends Scorpio {
 	private REVDigitBoard revDB = new REVDigitBoard();
 	private double revDispNum = 00.00;
 	private boolean shouldChange = true;
+	public String temp = "";
 
 	public AutoModeChooser() {
 
@@ -21,7 +22,7 @@ public class AutoModeChooser extends Scorpio {
 	}
 
 	public void displayRevBoardName() {
-		String temp = Double.toString(revDispNum);
+		temp = Double.toString(revDispNum);
 		if (revDispNum < .01) {
 			temp = "0.00";
 		} else {

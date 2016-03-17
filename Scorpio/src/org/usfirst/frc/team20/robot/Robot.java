@@ -30,11 +30,11 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInit() {
 		Scorpio.ahrs.ahrs.reset();
-		Scorpio.autoModes.createLowBarHighGoal();
+		Scorpio.autoModes.createMainAutoMode();
 	}
 
 	public void autonomousPeriodic() {
-		Scorpio.autoModes.executeLowBarHighGoal();
+		Scorpio.autoModes.executeMainAutoMode();
 	}
 
 	public void teleopPeriodic() {
