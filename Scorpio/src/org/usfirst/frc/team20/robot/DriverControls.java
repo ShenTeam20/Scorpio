@@ -66,6 +66,9 @@ public class DriverControls extends Scorpio {
 			tomahawks.actuateTomahawks();
 		}
 		if (driverJoy.getButtonX()) {
+			if (hood.getHoodEnc() < 4500) {
+				operator.hoodPositonHolder = 4700;
+			}
 			tomahawks.retractTomahawks();
 		}
 	}

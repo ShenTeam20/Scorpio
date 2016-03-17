@@ -28,7 +28,7 @@ public class Scorpio extends Constants {
 	protected static AHRSGyro ahrs = new AHRSGyro(); // Done
 
 	// Auto
-	// protected static AutoModeChooser autoModeChooser = new AutoModeChooser();
+	protected static AutoModeChooser autoModeChooser = new AutoModeChooser();
 	protected static AutoModes autoModes = new AutoModes();
 
 	// Human Controls

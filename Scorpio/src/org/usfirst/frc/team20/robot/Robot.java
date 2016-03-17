@@ -6,30 +6,26 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends IterativeRobot {
 
-	// AutoModeChooser auto = new AutoModeChooser();
-
 	Timer resetTimer = new Timer();
 
 	public void robotInit() {
-		// auto.clearRevBoard();
 		Scorpio.poke();
-		Scorpio.vision.start();
 	}
 
 	public void disabledInit() {
 		Scorpio.ahrs.ahrs.reset();
 		resetTimer.start();
-		// auto.clearRevBoard();
+		Scorpio.vision.start();
 		Scorpio.poke();
+		Scorpio.autoModeChooser.clearRevBoard();
 	}
 
 	public void disabledPeriodic() {
+		Scorpio.autoModeChooser.revBoardHandler();
 		if (resetTimer.get() > 30) {
 			Scorpio.ahrs.ahrs.reset();
 			resetTimer.reset();
 		}
-		// auto.revBoardHandler();
-		// auto.displayRevBoardNum();
 	}
 
 	public void autonomousInit() {

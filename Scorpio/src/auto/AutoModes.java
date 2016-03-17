@@ -87,7 +87,7 @@ public class AutoModes extends Scorpio {
 		lowBarHighGoalTree.addChild(rollOutTree);
 		lowBarHighGoalTree.addChild(new T20AutoCommandDriveStraightEncoder(1, -37000));
 		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.5, 7));
-		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.4, 45));
+		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.3, 38));
 		lowBarHighGoalTree.addChild(new T20AutoCommandHoodToOuterworksPosition());
 		lowBarHighGoalTree.addChild(new T20AutoAutoTarget());
 

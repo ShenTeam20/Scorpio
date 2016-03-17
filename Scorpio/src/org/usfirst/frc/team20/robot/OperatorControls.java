@@ -7,7 +7,7 @@ import subsystems.Drivetrain.driveModes;
 public class OperatorControls extends Scorpio {
 
 	protected T20GamePad operatorJoy = new T20GamePad(T20GamePad.JS_TYPE_XBOX, 1);
-	private double tempFlyspeed = 0, tempHoodPos = 0;
+	public double flyspeedHolder = 0, hoodPositonHolder = 0;
 
 	public OperatorControls() {
 
@@ -24,8 +24,8 @@ public class OperatorControls extends Scorpio {
 		// Lance controls
 		if (operatorJoy.getOneShotButtonLB()) {
 			lance.toggleLance();
-			if (!lance.getMagSwitchIsExtened()) {
-				tempHoodPos = hood.HOOD_POS_SAFE;
+			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() > hood.HOOD_POS_SAFE) {
+				hoodPositonHolder = hood.HOOD_POS_SAFE;
 			}
 		}
 
@@ -51,11 +51,11 @@ public class OperatorControls extends Scorpio {
 
 		// Flywheel controls
 		if (operatorJoy.getOneShotButtonBack()) {
-			tempFlyspeed = flywheel.FLYSPEED_STOP;
+			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
 
 		if (operatorJoy.getOneShotButtonStart()) {
-			tempFlyspeed = flywheel.FLYSPEED_OUTERWORKS;
+			flyspeedHolder = flywheel.FLYSPEED_OUTERWORKS;
 		}
 
 		if (operatorJoy.getAxisTrigger() > .8) {
@@ -64,34 +64,34 @@ public class OperatorControls extends Scorpio {
 
 		// Hood controls
 		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && Math.abs(operatorJoy.getAxisRightStickY()) > .2) {
-			tempHoodPos += (10000 * operatorJoy.getAxisRightStickY());
+			hoodPositonHolder += (10000 * operatorJoy.getAxisRightStickY());
 		}
 
 		if (operatorJoy.getPOV() == 270) {
-			tempHoodPos = hood.HOOD_POS_OUTERWORKS;
-			tempFlyspeed = flywheel.FLYSPEED_OUTERWORKS;
+			hoodPositonHolder = hood.HOOD_POS_OUTERWORKS;
+			flyspeedHolder = flywheel.FLYSPEED_OUTERWORKS;
 		}
 		if (operatorJoy.getPOV() == 90) {
-			tempHoodPos = hood.HOOD_POS_BATTER;
-			tempFlyspeed = flywheel.FLYSPEED_BATTER;
+			hoodPositonHolder = hood.HOOD_POS_BATTER;
+			flyspeedHolder = flywheel.FLYSPEED_BATTER;
 		}
 		if (operatorJoy.getPOV() == 0) {
-			tempHoodPos = hood.HOOD_POS_SAFE;
-			tempFlyspeed = flywheel.FLYSPEED_STOP;
+			hoodPositonHolder = hood.HOOD_POS_SAFE;
+			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
 		if (operatorJoy.getPOV() == 180) {
 			hood.homeHood();
-			tempHoodPos = 4000;
-			tempFlyspeed = flywheel.FLYSPEED_STOP;
+			hoodPositonHolder = 4000;
+			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
 		if (operatorJoy.getOneShotButtonLS()) {
 			hood.enableHoodControl();
-			tempHoodPos = hood.getHoodEnc();
+			hoodPositonHolder = hood.getHoodEnc();
 		}
 
-		flywheel.flywheelToSpeed(tempFlyspeed);
+		flywheel.flywheelToSpeed(flyspeedHolder);
 		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && hood.getHoodHomeState()) {
-			hood.moveHoodPositon(tempHoodPos);
+			hood.moveHoodPositon(hoodPositonHolder);
 		}
 	}
 }
