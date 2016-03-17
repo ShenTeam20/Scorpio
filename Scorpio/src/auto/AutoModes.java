@@ -5,9 +5,57 @@ import org.usfirst.frc.team20.robot.Team20Libraries.T20Node;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20ParallelNode;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20SeriesNode;
 
-import autoCommands.*;
+import autoCommands.T20AutoAutoTarget;
+import autoCommands.T20AutoCommandArcTurnToAngle;
+import autoCommands.T20AutoCommandDoNothing;
+import autoCommands.T20AutoCommandDriveStraightEncoder;
+import autoCommands.T20AutoCommandDriveStraightTime;
+import autoCommands.T20AutoCommandFlywheelToSpeed;
+import autoCommands.T20AutoCommandHomeHood;
+import autoCommands.T20AutoCommandHoodToLowPosition;
+import autoCommands.T20AutoCommandHoodToOuterworksPosition;
+import autoCommands.T20AutoCommandHoodToSafePosition;
+import autoCommands.T20AutoCommandLanceDown;
+import autoCommands.T20AutoCommandLanceUp;
+import autoCommands.T20AutoCommandToggleLance;
+import autoCommands.T20AutoCommandTomahawksDown;
+import autoCommands.T20AutoCommandTomahawksUp;
+import autoCommands.T20AutoCommandTurnToAngle;
 
 public class AutoModes extends Scorpio {
+
+	private T20Node systemCheckTree;
+
+	/**
+	 * Puts the robot through a system check<br>
+	 * <br>
+	 * 
+	 * @return a system check node
+	 */
+
+	public void createSystemCheck() {
+		createAutoBotsTransformRollOut();
+		createAutoBotsTransformConceal();
+		systemCheckTree.addChild(rollOutTree);
+		systemCheckTree.addChild(new T20AutoCommandHoodToOuterworksPosition());
+		systemCheckTree.addChild(new T20AutoCommandFlywheelToSpeed(1000));
+		systemCheckTree.addChild(new T20AutoCommandFlywheelToSpeed(flywheel.FLYSPEED_STOP));
+		systemCheckTree.addChild(new T20AutoCommandDriveStraightTime(.4, 3));
+		systemCheckTree.addChild(new T20AutoCommandDriveStraightTime(-.4, 3));
+		systemCheckTree.addChild(transformConcealTree);
+
+	}
+
+	/**
+	 * Puts the robot through a system check<br>
+	 * <br>
+	 * 
+	 * @return a system check node
+	 */
+
+	public void exeuteSystemCheck() {
+		systemCheckTree.execute();
+	}
 
 	private T20Node rollOutTree;
 
@@ -52,11 +100,9 @@ public class AutoModes extends Scorpio {
 	public void createAutoBotsTransformConceal() {
 		transformConcealTree = new T20SeriesNode();
 		transformConcealTree.addChild(new T20AutoCommandHoodToSafePosition());
-		transformConcealTree.addChild(new T20AutoCommandHomeHood());
 		transformConcealTree.addChild(new T20AutoCommandToggleLance());
 		T20Node secondaryTranformConceal = new T20ParallelNode();
 		secondaryTranformConceal.addChild(new T20AutoCommandLanceUp());
-		secondaryTranformConceal.addChild(new T20AutoCommandHoodToSafePosition());
 		secondaryTranformConceal.addChild(new T20AutoCommandTomahawksUp());
 		transformConcealTree.addChild(secondaryTranformConceal);
 	}
@@ -163,6 +209,10 @@ public class AutoModes extends Scorpio {
 		case "0.11":
 			break;
 		case "0.12":
+			break;
+		case "0.20":
+			createSystemCheck();
+			mainAutoNode.addChild(systemCheckTree);
 			break;
 		default:
 			break;

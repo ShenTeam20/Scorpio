@@ -3,12 +3,14 @@ package autoCommands;
 import org.usfirst.frc.team20.robot.Scorpio;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20Command;
 
-public class T20AutoCommandHoodToSafePosition extends Scorpio implements T20Command {
+public class T20AutoCommandFlywheelToSpeed extends Scorpio implements T20Command {
 	private boolean isFinished, isStarted;
+	private double speed;
 
-	public T20AutoCommandHoodToSafePosition() {
+	public T20AutoCommandFlywheelToSpeed(double speed) {
 		this.isFinished = false;
 		this.isStarted = false;
+		this.speed = speed;
 	}
 
 	@Override
@@ -18,15 +20,14 @@ public class T20AutoCommandHoodToSafePosition extends Scorpio implements T20Comm
 		}
 
 		if (!isStarted) {
-			System.out.println("<Hood Moving To Safe Position>");
+			System.out.println("<Flywheel Going To RPM: " + this.speed + ">");
 			isStarted = !isStarted;
 		}
-		hood.moveHoodPositon(hood.HOOD_POS_SAFE);
-		if (Math.abs(hood.getHoodEnc() - hood.HOOD_POS_SAFE) < 800) {
-			System.out.println("</Hood Moving To Safe Position>");
+		flywheel.flywheelToSpeed(this.speed);
+		if (flywheel.getSpeed() >= this.speed) {
+			System.out.println("</Flywheel Going To RPM: " + this.speed + ">");
 			this.isFinished = true;
 		}
-
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class T20AutoCommandHoodToSafePosition extends Scorpio implements T20Comm
 
 	@Override
 	public T20Command copy() {
-		return new T20AutoCommandHoodToSafePosition();
+		return new T20AutoCommandFlywheelToSpeed(this.speed);
 	}
 
 }

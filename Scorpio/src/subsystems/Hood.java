@@ -22,7 +22,7 @@ public class Hood {
 		hoodTalon.subsystemName = "Hood";
 		hoodTalon.changeControlMode(TalonControlMode.Position);
 		hoodTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		hoodTalon.setPosition(0);
+		hoodTalon.setPosition(HOOD_POS_SAFE);
 		hoodTalon.setPID(.05, 0, 0);
 		autoTargetHoodPID.start();
 		hoodTalon.homed = true;
