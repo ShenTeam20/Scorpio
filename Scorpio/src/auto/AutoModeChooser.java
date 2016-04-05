@@ -9,9 +9,9 @@ import org.usfirst.frc.team20.robot.Team20Libraries.REVDigitBoard;
 public class AutoModeChooser extends Scorpio {
 
 	private REVDigitBoard revDB = new REVDigitBoard();
-	private double revDispNum = 00.00;
+	private double revDispNum;
 	private boolean shouldChange = true;
-	public String temp = "";
+	public String temp;
 
 	public AutoModeChooser() {
 
@@ -28,8 +28,7 @@ public class AutoModeChooser extends Scorpio {
 		} else {
 			temp = temp.substring(0, 4);
 		}
-		System.out.println("                           " + temp);
-
+		// System.out.println(" " + temp);
 		switch (temp) {
 		case "0.00":
 			revDB.display("NTHN");
@@ -104,13 +103,21 @@ public class AutoModeChooser extends Scorpio {
 			revDispNum = .00;
 			clearRevBoard();
 		}
-		if (getPotVolt() > .28) {
+		if (getPotVolt() > .273) {
 			displayRevBoardName();
 			shouldChange = false;
 		} else {
 			displayRevBoardNum();
 			shouldChange = true;
 		}
+
+		temp = Double.toString(revDispNum);
+		if (revDispNum < .01) {
+			temp = "0.00";
+		} else {
+			temp = temp.substring(0, 4);
+		}
+		whatAuto = temp;
 	}
 
 	public double getDispNum() {

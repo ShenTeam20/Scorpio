@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class Hood {
 
-	public final double HOOD_POS_OUTERWORKS = 567783, HOOD_POS_BATTER = 650000, HOOD_POS_SAFE = 252346;
+	// 560783
+	public final double HOOD_POS_OUTERWORKS = 537000, HOOD_POS_BATTER = 646000, HOOD_POS_SAFE = 252346;
+	public boolean hoodIsActuallyHomed = false;
 	private double hoodCurrent = 0;
 	private double hoodOperationCurrentLimit = 10;
 	private double hoodHomingCurrentLimit = 5;
@@ -22,7 +24,7 @@ public class Hood {
 		hoodTalon.subsystemName = "Hood";
 		hoodTalon.changeControlMode(TalonControlMode.Position);
 		hoodTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		hoodTalon.setPosition(HOOD_POS_SAFE);
+		hoodTalon.setPosition(0);
 		hoodTalon.setPID(.05, 0, 0);
 		autoTargetHoodPID.start();
 		hoodTalon.homed = true;

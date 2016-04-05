@@ -36,4 +36,8 @@ public class Indexer extends Scorpio {
 			lance.stopIntake();
 		}
 	}
+
+	public boolean getIndexerBumpSwitch() {
+		return !indexerBumpSwitch.get();
+	}
 }

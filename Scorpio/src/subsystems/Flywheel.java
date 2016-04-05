@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class Flywheel extends Scorpio {
 
-	public final double FLYSPEED_OUTERWORKS = 3900, FLYSPEED_BATTER = 3200, FLYSPEED_STOP = 0;
+	//3200 batter prev
+	public final double FLYSPEED_OUTERWORKS = 3550, FLYSPEED_BATTER = 2000, FLYSPEED_STOP = 0;
 
 	private T20CANTalon flywheelTalon = new T20CANTalon(Constants.FLYWHEEL_MOTOR_PORT);
 
@@ -43,6 +44,10 @@ public class Flywheel extends Scorpio {
 	public double getSpeed() {
 		System.out.println("Flywheel RPM: " + (flywheelTalon.getSpeed() * 72) / 22);
 		return (flywheelTalon.getSpeed() * 72) / 22;
+	}
+
+	public double getFlyEnc() {
+		return flywheelTalon.getEncPosition();
 	}
 
 }

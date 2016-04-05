@@ -23,6 +23,7 @@ public class T20AutoCommandHoodToLowPosition extends Scorpio implements T20Comma
 		}
 		hood.hoodHomeWatchdog();
 		if (hood.getHoodHomeState()) {
+			hood.hoodIsActuallyHomed = true;
 			System.out.println("</Hood Moving To Low Position>");
 			isFinished = true;
 		}

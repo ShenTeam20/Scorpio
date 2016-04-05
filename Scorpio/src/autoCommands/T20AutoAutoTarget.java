@@ -3,6 +3,7 @@ package autoCommands;
 import org.usfirst.frc.team20.robot.Scorpio;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20Command;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 public class T20AutoAutoTarget extends Scorpio implements T20Command {
@@ -30,17 +31,17 @@ public class T20AutoAutoTarget extends Scorpio implements T20Command {
 		System.out
 				.println("                                           headingoffset:  " + drivetrain.getHeadingOffSet());
 
-		if (!(drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 1)) {
+		if (!(drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 1.5)) {
 			sysTime = System.currentTimeMillis();
 		}
 
-		if (drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 1
+		if (drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 1.5
 				&& System.currentTimeMillis() > sysTime + 500) {
 			System.out.println("</Auto Targeting" + ">");
 			flywheel.flywheelToSpeed(flywheel.FLYSPEED_OUTERWORKS);
 		}
 
-		if (flywheel.getSpeed() > 9000) {
+		if (flywheel.getSpeed() > 8000) {
 			flywheel.fire();
 			if (!fireTimerStarted) {
 				fireTimer.start();
@@ -48,11 +49,12 @@ public class T20AutoAutoTarget extends Scorpio implements T20Command {
 			}
 
 		}
-		if (fireTimer.get() > 5) {
+		if (DriverStation.getInstance().getMatchTime() < .5) {
 			System.out.println("</Auto Firing>");
 			lance.stopIntake();
 			indexer.stopIndexer();
 			flywheel.flywheelToSpeed(flywheel.FLYSPEED_STOP);
+			drivetrain.setFieldCentric();
 			this.isFinished = true;
 		}
 	}

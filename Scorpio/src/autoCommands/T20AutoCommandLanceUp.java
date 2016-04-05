@@ -26,7 +26,7 @@ public class T20AutoCommandLanceUp extends Scorpio implements T20Command {
 			lanceTime.start();
 		}
 		lance.lanceMovementWatchDog();
-		if (lanceTime.get() > 8) {
+		if (lanceTime.get() > 2) {
 			lanceTime.stop();
 			this.isFinished = true;
 			System.out.println("</Lance Is Moving Up>");

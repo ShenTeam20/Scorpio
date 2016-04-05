@@ -17,14 +17,15 @@ public class OperatorControls extends Scorpio {
 		indexer.indexerBumpSwitchWatchDog();
 		hood.hoodHomeWatchdog();
 		lance.lanceMovementWatchDog();
-		// flywheel.getSpeed();
-		// System.out.println(" "+hood.getHoodEnc());
+		 flywheel.getSpeed();
+		// System.out.println(" left" + drivetrain.getLeftSideEncVal() + "
+		// right" + drivetrain.getRightSideEncVal());
 		// lance.lanceSensors();
 
 		// Lance controls
 		if (operatorJoy.getOneShotButtonLB()) {
 			lance.toggleLance();
-			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() > hood.HOOD_POS_SAFE) {
+			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() > hood.HOOD_POS_SAFE && hood.hoodIsActuallyHomed) {
 				hoodPositonHolder = hood.HOOD_POS_SAFE;
 			}
 		}
@@ -64,23 +65,27 @@ public class OperatorControls extends Scorpio {
 
 		// Hood controls
 		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && Math.abs(operatorJoy.getAxisRightStickY()) > .2) {
-			hoodPositonHolder += (10000 * operatorJoy.getAxisRightStickY());
+			hoodPositonHolder += (1000 * operatorJoy.getAxisRightStickY());
 		}
 
 		if (operatorJoy.getPOV() == 270) {
-			hoodPositonHolder = hood.HOOD_POS_OUTERWORKS;
+			if (hood.hoodIsActuallyHomed)
+				hoodPositonHolder = hood.HOOD_POS_OUTERWORKS;
 			flyspeedHolder = flywheel.FLYSPEED_OUTERWORKS;
 		}
 		if (operatorJoy.getPOV() == 90) {
-			hoodPositonHolder = hood.HOOD_POS_BATTER;
+			if (hood.hoodIsActuallyHomed)
+				hoodPositonHolder = hood.HOOD_POS_BATTER;
 			flyspeedHolder = flywheel.FLYSPEED_BATTER;
 		}
 		if (operatorJoy.getPOV() == 0) {
-			hoodPositonHolder = hood.HOOD_POS_SAFE;
+			if (hood.hoodIsActuallyHomed)
+				hoodPositonHolder = hood.HOOD_POS_SAFE;
 			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
 		if (operatorJoy.getPOV() == 180) {
 			hood.homeHood();
+			hood.hoodIsActuallyHomed = true;
 			hoodPositonHolder = 4000;
 			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}

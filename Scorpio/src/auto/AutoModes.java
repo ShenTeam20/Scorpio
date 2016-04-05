@@ -5,22 +5,7 @@ import org.usfirst.frc.team20.robot.Team20Libraries.T20Node;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20ParallelNode;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20SeriesNode;
 
-import autoCommands.T20AutoAutoTarget;
-import autoCommands.T20AutoCommandArcTurnToAngle;
-import autoCommands.T20AutoCommandDoNothing;
-import autoCommands.T20AutoCommandDriveStraightEncoder;
-import autoCommands.T20AutoCommandDriveStraightTime;
-import autoCommands.T20AutoCommandFlywheelToSpeed;
-import autoCommands.T20AutoCommandHomeHood;
-import autoCommands.T20AutoCommandHoodToLowPosition;
-import autoCommands.T20AutoCommandHoodToOuterworksPosition;
-import autoCommands.T20AutoCommandHoodToSafePosition;
-import autoCommands.T20AutoCommandLanceDown;
-import autoCommands.T20AutoCommandLanceUp;
-import autoCommands.T20AutoCommandToggleLance;
-import autoCommands.T20AutoCommandTomahawksDown;
-import autoCommands.T20AutoCommandTomahawksUp;
-import autoCommands.T20AutoCommandTurnToAngle;
+import autoCommands.*;
 
 public class AutoModes extends Scorpio {
 
@@ -34,6 +19,7 @@ public class AutoModes extends Scorpio {
 	 */
 
 	public void createSystemCheck() {
+		systemCheckTree = new T20SeriesNode();
 		createAutoBotsTransformRollOut();
 		createAutoBotsTransformConceal();
 		systemCheckTree.addChild(rollOutTree);
@@ -53,7 +39,7 @@ public class AutoModes extends Scorpio {
 	 * @return a system check node
 	 */
 
-	public void exeuteSystemCheck() {
+	public void executeSystemCheck() {
 		systemCheckTree.execute();
 	}
 
@@ -118,6 +104,33 @@ public class AutoModes extends Scorpio {
 		transformConcealTree.execute();
 	}
 
+	private T20Node lowBarTree;
+
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a low bar high goal auto
+	 */
+
+	public void createLowBar() {
+		createAutoBotsTransformRollOut();
+		lowBarTree = new T20SeriesNode();
+		lowBarTree.addChild(rollOutTree);
+		lowBarTree.addChild(new T20AutoCommandDriveStraightTime(1, 2));
+
+	}
+
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a low bar high goal auto
+	 */
+	public void executeLowBar() {
+		lowBarTree.execute();
+	}
+
 	private T20Node lowBarHighGoalTree;
 
 	/**
@@ -131,9 +144,9 @@ public class AutoModes extends Scorpio {
 		createAutoBotsTransformRollOut();
 		lowBarHighGoalTree = new T20SeriesNode();
 		lowBarHighGoalTree.addChild(rollOutTree);
-		lowBarHighGoalTree.addChild(new T20AutoCommandDriveStraightEncoder(1, -37000));
+		lowBarHighGoalTree.addChild(new T20AutoCommandDriveStraightTime(1, 1.7));
 		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.5, 7));
-		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.3, 38));
+		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.2, 38));
 		lowBarHighGoalTree.addChild(new T20AutoCommandHoodToOuterworksPosition());
 		lowBarHighGoalTree.addChild(new T20AutoAutoTarget());
 
@@ -150,6 +163,64 @@ public class AutoModes extends Scorpio {
 		lowBarHighGoalTree.execute();
 	}
 
+	private T20Node finishWithAHighGoalTree;
+
+	/**
+	 * Drives the robot through a defense and high goals<br>
+	 * <br>
+	 * 
+	 * @return a defense high goal auto
+	 */
+
+	public void createfinishWithAHighGoal(boolean hasRolledOut, double turnAngle) {
+		createAutoBotsTransformRollOut();
+		finishWithAHighGoalTree = new T20SeriesNode();
+		T20Node turnRollOut = new T20ParallelNode();
+		if (!hasRolledOut)
+			turnRollOut.addChild(rollOutTree);
+		turnRollOut.addChild(new T20AutoCommandTurnToAngle(turnAngle));
+		finishWithAHighGoalTree.addChild(turnRollOut);
+		finishWithAHighGoalTree.addChild(new T20AutoCommandHoodToOuterworksPosition());
+		finishWithAHighGoalTree.addChild(new T20AutoAutoTarget());
+	}
+
+	/**
+	 * Drives the robot through a defense and high goals<br>
+	 * <br>
+	 * 
+	 * @return a defense high goal auto
+	 */
+
+	public void executefinishWithAHighGoal() {
+		finishWithAHighGoalTree.execute();
+	}
+
+	private T20Node testTree;
+
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a low bar high goal auto
+	 */
+
+	public void createTestTree() {
+		testTree = new T20SeriesNode();
+		testTree.addChild(new T20AutoCommandDriveStraightFeetLeft(.3, 1));
+
+	}
+
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a low bar high goal auto
+	 */
+
+	public void executeTestTree() {
+		testTree.execute();
+	}
+
 	private T20Node crossBAndD;
 
 	/**
@@ -161,8 +232,9 @@ public class AutoModes extends Scorpio {
 
 	public void createCrossBAndD(double speed, double time, double angle) {
 		crossBAndD = new T20SeriesNode();
+		crossBAndD.addChild(new T20AutoCommandLanceWatchDog());
 		crossBAndD.addChild(new T20AutoCommandDriveStraightTime(speed, time));
-		crossBAndD.addChild(new T20AutoCommandTurnToAngle(angle));
+		// crossBAndD.addChild(new T20AutoCommandTurnToAngle(angle));
 	}
 
 	/**
@@ -178,43 +250,71 @@ public class AutoModes extends Scorpio {
 
 	private T20Node mainAutoNode;
 
-	public void createMainAutoMode() {
+	public void createMainAutoMode(int pos, boolean doExtend, boolean shouldHighGoal) {
+		boolean rollOutSender = false;
+		createAutoBotsTransformConceal();
+		createAutoBotsTransformRollOut();
+		createCrossBAndD(1, 2.5, ahrs.ahrs.getAngle());
+		createLowBar();
+		createLowBarHighGoal();
+		createSystemCheck();
+		createTestTree();
 		mainAutoNode = new T20SeriesNode();
-		switch (autoModeChooser.temp) {
-		case "0.00":
-			mainAutoNode.addChild(new T20AutoCommandDoNothing());
+		switch (pos) {
+		case 1:
+			if (shouldHighGoal) {
+				mainAutoNode.addChild(lowBarHighGoalTree);
+			} else {
+				mainAutoNode.addChild(lowBarTree);
+			}
 			break;
-		case "0.01":
+		case 2:
+			if (doExtend) {
+				mainAutoNode.addChild(lowBarTree);
+				rollOutSender = true;
+			} else {
+				mainAutoNode.addChild(crossBAndD);
+			}
 			break;
-		case "0.02":
+		case 3:
+			if (doExtend) {
+				mainAutoNode.addChild(lowBarTree);
+				rollOutSender = true;
+			} else {
+				mainAutoNode.addChild(crossBAndD);
+
+			}
+			if (shouldHighGoal) {
+				createfinishWithAHighGoal(rollOutSender, 5);
+				mainAutoNode.addChild(finishWithAHighGoalTree);
+			}
 			break;
-		case "0.03":
+		case 4:
+			if (doExtend) {
+				mainAutoNode.addChild(lowBarTree);
+				rollOutSender = true;
+			} else {
+				mainAutoNode.addChild(crossBAndD);
+
+			}
+			if (shouldHighGoal) {
+				createfinishWithAHighGoal(rollOutSender, 0);
+				mainAutoNode.addChild(finishWithAHighGoalTree);
+			}
 			break;
-		case "0.04":
+		case 5:
+			if (doExtend) {
+				mainAutoNode.addChild(lowBarTree);
+				rollOutSender = true;
+			} else {
+				mainAutoNode.addChild(crossBAndD);
+			}
 			break;
-		case "0.05":
-			break;
-		case "0.06":
-			break;
-		case "0.07":
-			createLowBarHighGoal();
-			mainAutoNode.addChild(lowBarHighGoalTree);
-			break;
-		case "0.08":
-			break;
-		case "0.09":
-			break;
-		case "0.10":
-			break;
-		case "0.11":
-			break;
-		case "0.12":
-			break;
-		case "0.20":
-			createSystemCheck();
+		case 20:
 			mainAutoNode.addChild(systemCheckTree);
 			break;
 		default:
+			mainAutoNode.addChild(new T20AutoCommandDoNothing());
 			break;
 		}
 	}

@@ -87,7 +87,7 @@ public class VisionTargeting {
 			frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 			binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			particleBinaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
-			session = NIVision.IMAQdxOpenCamera("cam3", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+			session = NIVision.IMAQdxOpenCamera("cam1", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 			box = new NIVision.StructuringElement(4, 4, 1);// 3,3,1
 			criteria = new NIVision.ParticleFilterCriteria2[1];
 			criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA,

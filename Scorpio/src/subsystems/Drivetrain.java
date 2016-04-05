@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class Drivetrain extends Scorpio {
-
-	private final double scaling = 8500;
+	// 8500
+	private final double scaling = 10000;
 
 	private double recCenterX = 0, recCenterY = 0, width = 0, height = 0, headingSetpoint = 0;
 
@@ -95,12 +95,12 @@ public class Drivetrain extends Scorpio {
 		System.out.println(width);
 		speed = -speed;
 		getCameraValues();
-//		System.out.println("                       RECXY   " + recCenterY);
+		// System.out.println(" RECXY " + recCenterY);
 		double cameraSpan = 0.09;
 		double hoodOffsetRatio = .61;
 		// .8695
-		double hoodSetpoint = width * (1.53) - 142.0;
-//		System.out.println("                                         " + width);
+		double hoodSetpoint = width * (1.53) - 50.0;
+		// System.out.println(" " + width);
 		if (headingSetpoint == 0) {
 			headingSetpoint = ahrs.ahrs.getAngle() + ((recCenterX + (width * hoodOffsetRatio)) * cameraSpan);
 		}
@@ -117,6 +117,7 @@ public class Drivetrain extends Scorpio {
 			// + ((ahrs.ahrs.getAngle() + ((recCenterX + (width *
 			// hoodOffsetRatio)) * cameraSpan)) * .1);
 			headingSetpoint = ahrs.ahrs.getAngle() + ((recCenterX + (width * hoodOffsetRatio)) * cameraSpan);
+			headingSetpoint += 7;
 			hood.setAutoTargetHood_PV_SP(recCenterY, hoodSetpoint);
 			hood.moveHoodPVbus(-hood.getAutoTargetHood_OP());
 			drivetrainHeadingPID.setSP(headingSetpoint);
@@ -134,8 +135,8 @@ public class Drivetrain extends Scorpio {
 
 	private void driveAuto(double speed, double heading) {
 		getCameraValues();
-//		System.out.println("                       RECXY   " + recCenterY);
-//		System.out.println("                                         " + width);
+		// System.out.println(" RECXY " + recCenterY);
+		// System.out.println(" " + width);
 		speed = -speed;
 		drivetrainHeadingPID.setSP(heading);
 		drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());

@@ -11,6 +11,7 @@ import com.ni.vision.NIVision.Rect;
 import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class VisionTargeting2 {
 	public class ParticleReport implements Comparator<ParticleReport>, Comparable<ParticleReport> {
@@ -34,6 +35,7 @@ public class VisionTargeting2 {
 		}
 	};
 
+	USBCamera camera;
 	double AREA_MINIMUM;
 	double LONG_RATIO;
 	double SHORT_RATIO;
@@ -87,17 +89,27 @@ public class VisionTargeting2 {
 	public boolean init() {
 		cameraStarted = true;
 		try {
+			camera = new USBCamera("cam2");
+			camera.setSize(320, 240);
+			// camera.setBrightness(4);
+			camera.openCamera();
+			camera.startCapture();
+		} catch (Exception ex) {
+			System.out.println("Error when starting the camera:");
+		}
+		try {
 			frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 			binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			particleBinaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
-			session = NIVision.IMAQdxOpenCamera("cam3", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+			// session = NIVision.IMAQdxOpenCamera("cam1",
+			// NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 			box = new NIVision.StructuringElement(4, 4, 1);// 3,3,1
 			criteria = new NIVision.ParticleFilterCriteria2[1];
 			criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA,
 					AREA_MINIMUM, 100.0, 0, 0);
 			filterOptions = new NIVision.ParticleFilterOptions2(0, 0, 1, 1);
-			NIVision.IMAQdxConfigureGrab(session);
-			NIVision.IMAQdxStartAcquisition(session);
+			// NIVision.IMAQdxConfigureGrab(session);
+			// NIVision.IMAQdxStartAcquisition(session);
 			// TARGET_HUE_RANGE = new NIVision.Range(54, 96);
 			// TARGET_SAT_RANGE = new NIVision.Range(188, 255);
 			// TARGET_VAL_RANGE = new NIVision.Range(69, 255);
@@ -107,9 +119,19 @@ public class VisionTargeting2 {
 			// TARGET_HUE_RANGE = new NIVision.Range(71, 132);
 			// TARGET_SAT_RANGE = new NIVision.Range(236, 255);
 			// TARGET_VAL_RANGE = new NIVision.Range(135, 238);
-			TARGET_HUE_RANGE = new NIVision.Range(71, 132);
-			TARGET_SAT_RANGE = new NIVision.Range(128, 255);
-			TARGET_VAL_RANGE = new NIVision.Range(165, 255);
+
+			// BARRA
+			// TARGET_HUE_RANGE = new NIVision.Range(32, 110);
+			// TARGET_SAT_RANGE = new NIVision.Range(143, 255);
+			// TARGET_VAL_RANGE = new NIVision.Range(45, 255);
+
+			// TARGET_HUE_RANGE = new NIVision.Range(70, 175);
+			// TARGET_SAT_RANGE = new NIVision.Range(100, 255);
+			// TARGET_VAL_RANGE = new NIVision.Range(85, 255);
+
+			TARGET_HUE_RANGE = new NIVision.Range(44, 157);
+			TARGET_SAT_RANGE = new NIVision.Range(0, 177);
+			TARGET_VAL_RANGE = new NIVision.Range(245, 255);
 
 			// filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			width = 0;
@@ -131,13 +153,23 @@ public class VisionTargeting2 {
 		horizontalImage = 240;
 		distance = -1;
 	}
+	
+	
+	
+	
+	
 
 	private boolean getImage() {
 		cameraWorks = true;
 		try {
-			NIVision.IMAQdxGrab(session, frame, 1);
+
+			// camera.startCapture();
+
+			camera.getImage(frame);
+
+			// NIVision.IMAQdxGrab(session, frame, 1);
 		} catch (Exception e) {
-			System.out.println(e.getStackTrace());
+			// System.out.println(e.getStackTrace());
 			cameraWorks = false;
 		}
 		return cameraWorks;
@@ -231,6 +263,7 @@ public class VisionTargeting2 {
 			thisWidth = Math.abs(par[particleIndex].BoundingRectLeft - par[particleIndex].BoundingRectRight);
 			thisHeight = Math.abs(par[particleIndex].BoundingRectBottom - par[particleIndex].BoundingRectTop);
 			aspectRatio = thisHeight / thisWidth;
+			// System.out.println("AREA RATIO" + par[particleIndex].AreaRatio);
 			if (thisWidth > 30 && thisWidth < 117 && par[particleIndex].AreaRatio < .33 && aspectRatio > .3
 					&& aspectRatio < 1.5) {
 				// System.out.println("<in if>");
