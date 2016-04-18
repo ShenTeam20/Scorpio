@@ -33,8 +33,8 @@ public class T20AutoCommandDriveStraightTime extends Scorpio implements T20Comma
 		if (driveTimer.get() < this.time) {
 			drivetrain.drive(this.speed, this.heading);
 		} else if (driveTimer.get() > this.time) {
-			System.out.println("</Drive Straight At Speed: " + this.speed + " For Time: " + this.time + ">");
 			drivetrain.drive(0, this.heading);
+			System.out.println("</Drive Straight At Speed: " + this.speed + " For Time: " + this.time + ">");
 			this.isFinished = true;
 		}
 	}

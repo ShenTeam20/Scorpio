@@ -146,10 +146,9 @@ public class AutoModes extends Scorpio {
 		lowBarHighGoalTree.addChild(rollOutTree);
 		lowBarHighGoalTree.addChild(new T20AutoCommandDriveStraightTime(1, 1.7));
 		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.5, 7));
-		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(.2, 38));
+		lowBarHighGoalTree.addChild(new T20AutoCommandArcTurnToAngle(0, 33));
 		lowBarHighGoalTree.addChild(new T20AutoCommandHoodToOuterworksPosition());
 		lowBarHighGoalTree.addChild(new T20AutoAutoTarget());
-
 	}
 
 	/**
@@ -234,7 +233,6 @@ public class AutoModes extends Scorpio {
 		crossBAndD = new T20SeriesNode();
 		crossBAndD.addChild(new T20AutoCommandLanceWatchDog());
 		crossBAndD.addChild(new T20AutoCommandDriveStraightTime(speed, time));
-		// crossBAndD.addChild(new T20AutoCommandTurnToAngle(angle));
 	}
 
 	/**
@@ -274,6 +272,11 @@ public class AutoModes extends Scorpio {
 				rollOutSender = true;
 			} else {
 				mainAutoNode.addChild(crossBAndD);
+
+			}
+			if (shouldHighGoal) {
+				createfinishWithAHighGoal(rollOutSender, 30);
+				mainAutoNode.addChild(finishWithAHighGoalTree);
 			}
 			break;
 		case 3:
@@ -308,6 +311,11 @@ public class AutoModes extends Scorpio {
 				rollOutSender = true;
 			} else {
 				mainAutoNode.addChild(crossBAndD);
+
+			}
+			if (shouldHighGoal) {
+				createfinishWithAHighGoal(rollOutSender, -40);
+				mainAutoNode.addChild(finishWithAHighGoalTree);
 			}
 			break;
 		case 20:

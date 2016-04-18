@@ -27,6 +27,12 @@ public class TsarControls extends Scorpio {
 		// + drivetrain.getRightSideEncVal());
 		// lance.lanceSensors();
 
+		if (tsarJoy.getAxisRightStickY() > .8) {
+			salt.addSalt();
+		} else {
+			salt.addWater();
+		}
+
 		if (Math.abs(tsarJoy.getAxisTrigger()) > 0.2 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			drivetrain.setRobotCentric();
 			heading = drivetrain.getHeading();
@@ -39,7 +45,7 @@ public class TsarControls extends Scorpio {
 				}
 				if (ahrs.ahrs.isConnected() && navXOn)
 					;
-//					drivetrain.setFieldCentric();
+				// drivetrain.setFieldCentric();
 			}
 		}
 

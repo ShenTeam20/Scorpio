@@ -78,6 +78,12 @@ public class DriverControls extends Scorpio {
 			}
 			tomahawks.retractTomahawks();
 		}
+
+		if (driverJoy.getPOV() == 0) {
+			salt.addSalt();
+		} else {
+			salt.addWater();
+		}
 	}
 
 }

@@ -6,6 +6,8 @@ public class Constants {
 	public static final int COLLECTOR_MOTOR_PORT = 1;
 	public static final int SECOND_COLLECTOR_MOTOR_PORT = 2;
 	public static final int INDEXER_MOTOR_PORT = 3;
+	public static final int SALT_ONE_PORT = 4;
+	public static final int SALT_TWO_PORT = 5;
 
 	// CANTalon's
 	public static final int DRIVETRAIN_MASTER_LEFT_MOTOR_PORT = 0;
