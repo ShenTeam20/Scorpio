@@ -7,8 +7,16 @@ public class VisionThread extends Thread {
 	public VisionThread() {
 		vision.init();
 	}
+	public void getProcessImage() {
+		try {
+			vision.processImage();
+			
+		} catch (Exception e) {
+			System.out.println("getProcessImage() failed: " + e.toString());
+		}
+	}
 
-	public void run() {
+	/*public void run() {
 		while (true) {
 			try {
 				Thread.sleep(20);
@@ -17,6 +25,6 @@ public class VisionThread extends Thread {
 			}
 			vision.processImage();
 		}
-	}
+	}*/
 
 }

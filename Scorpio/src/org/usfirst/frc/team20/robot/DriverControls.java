@@ -9,6 +9,7 @@ public class DriverControls extends Scorpio {
 	private T20GamePad driverJoy = new T20GamePad(T20GamePad.JS_TYPE_XBOX, 0);
 
 	private double heading = 0;
+	private boolean navXOn = true;
 
 	public DriverControls() {
 		driverJoy.leftStickTolerance = .1;
@@ -17,6 +18,11 @@ public class DriverControls extends Scorpio {
 	private long mills = 0;
 
 	public void driverControls() {
+
+		if (driverJoy.getButtonRS()) {
+			navXOn = !navXOn;
+		}
+
 		if (Math.abs(driverJoy.getAxisTrigger()) > 0.2 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			drivetrain.setRobotCentric();
 			heading = drivetrain.getHeading();
@@ -27,8 +33,9 @@ public class DriverControls extends Scorpio {
 
 					heading = drivetrain.getHeading();
 				}
-				if (ahrs.ahrs.isConnected())
-					drivetrain.setFieldCentric();
+				if (ahrs.ahrs.isConnected() && navXOn) {
+					// drivetrain.setFieldCentric();
+				}
 			}
 		}
 

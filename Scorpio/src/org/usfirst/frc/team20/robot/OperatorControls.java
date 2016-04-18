@@ -8,6 +8,7 @@ public class OperatorControls extends Scorpio {
 
 	protected T20GamePad operatorJoy = new T20GamePad(T20GamePad.JS_TYPE_XBOX, 1);
 	public double flyspeedHolder = 0, hoodPositonHolder = 0;
+	private boolean helperBool = false;
 
 	public OperatorControls() {
 
@@ -17,13 +18,14 @@ public class OperatorControls extends Scorpio {
 		indexer.indexerBumpSwitchWatchDog();
 		hood.hoodHomeWatchdog();
 		lance.lanceMovementWatchDog();
-		 flywheel.getSpeed();
-		// System.out.println(" left" + drivetrain.getLeftSideEncVal() + "
-		// right" + drivetrain.getRightSideEncVal());
+		// System.out.println(hood.getHoodEnc());
+		flywheel.getSpeed();
+		// System.out.println(" left" + drivetrain.getLeftSideEncVal() + "right"
+		// + drivetrain.getRightSideEncVal());
 		// lance.lanceSensors();
 
 		// Lance controls
-		if (operatorJoy.getOneShotButtonLB()) {
+		if (operatorJoy.getOneShotButtonLB() && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			lance.toggleLance();
 			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() > hood.HOOD_POS_SAFE && hood.hoodIsActuallyHomed) {
 				hoodPositonHolder = hood.HOOD_POS_SAFE;
@@ -52,6 +54,8 @@ public class OperatorControls extends Scorpio {
 
 		// Flywheel controls
 		if (operatorJoy.getOneShotButtonBack()) {
+			lance.stopIntake();
+			indexer.stopIndexer();
 			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
 
@@ -80,15 +84,29 @@ public class OperatorControls extends Scorpio {
 		}
 		if (operatorJoy.getPOV() == 0) {
 			if (hood.hoodIsActuallyHomed)
-				hoodPositonHolder = hood.HOOD_POS_SAFE;
-			flyspeedHolder = flywheel.FLYSPEED_STOP;
+				hoodPositonHolder = hood.HOOD_POS_THE_6;
+			flyspeedHolder = flywheel.FLYSPEED_OUTERWORKS;
 		}
 		if (operatorJoy.getPOV() == 180) {
-			hood.homeHood();
-			hood.hoodIsActuallyHomed = true;
-			hoodPositonHolder = 4000;
+
+			if (hood.hoodIsActuallyHomed || drivetrain.driveMode != driveModes.CAMERA_TARGET) {
+				hoodPositonHolder = 20000;
+				helperBool = true;
+			}
+
+			if (!hood.hoodIsActuallyHomed) {
+				hood.homeHood();
+				hood.hoodIsActuallyHomed = true;
+				hoodPositonHolder = 4000;
+			}
 			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
+
+		if (helperBool && hood.getHoodEnc() < 30000) {
+			hood.homeHood();
+			helperBool = false;
+		}
+
 		if (operatorJoy.getOneShotButtonLS()) {
 			hood.enableHoodControl();
 			hoodPositonHolder = hood.getHoodEnc();

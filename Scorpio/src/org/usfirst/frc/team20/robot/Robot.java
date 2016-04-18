@@ -21,10 +21,10 @@ public class Robot extends IterativeRobot {
 		Scorpio.ahrs.ahrs.reset();
 		resetTimer.start();
 		if (!visionStart) {
-			//Scorpio.vision.start();
-			
+			// Scorpio.vision.start();
+
 			visionStart = true;
-			visionStart = Scorpio.vision.init();
+			visionStart = Scorpio.vision.vision.init();
 		}
 	}
 
@@ -70,16 +70,19 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void autonomousPeriodic() {
+		Scorpio.vision.vision.processImage();
 		Scorpio.autoModes.executeMainAutoMode();
 	}
 
 	public void teleopPeriodic() {
+		Scorpio.vision.vision.processImage();
 		Scorpio.operator.opControls();
 		Scorpio.driver.driverControls();
+		// Scorpio.tsar.tsarControls();
+
 	}
 
 	public void testPeriodic() {
-
 	}
 
 }

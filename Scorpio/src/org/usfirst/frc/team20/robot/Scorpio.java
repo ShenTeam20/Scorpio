@@ -24,8 +24,8 @@ public class Scorpio extends Constants {
 	protected static Drivetrain drivetrain = new Drivetrain(); // Done
 
 	// Vision
-//	protected static VisionThread vision = new VisionThread();// Done
-	protected static VisionTargeting2 vision = new VisionTargeting2();
+	protected static VisionThread vision = new VisionThread();// Done
+	// protected static VisionTargeting2 vision = new VisionTargeting2();
 	// Gyro
 	protected static AHRSGyro ahrs = new AHRSGyro(); // Done
 
@@ -38,4 +38,5 @@ public class Scorpio extends Constants {
 	// Human Controls
 	protected static OperatorControls operator = new OperatorControls(); // Done
 	protected static DriverControls driver = new DriverControls(); // Done
+	protected static TsarControls tsar = new TsarControls(); // Maybe?
 }

@@ -2,6 +2,8 @@ package org.usfirst.frc.team20.robot.Team20Libraries;
 
 import java.util.Comparator;
 
+import org.usfirst.frc.team20.robot.Scorpio;
+
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
@@ -11,9 +13,11 @@ import com.ni.vision.NIVision.Rect;
 import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.USBCamera;
 
-public class VisionTargeting2 {
+public class VisionTargeting2 extends Scorpio {
 	public class ParticleReport implements Comparator<ParticleReport>, Comparable<ParticleReport> {
 		double PercentAreaToImageArea;
 		double Area;
@@ -35,6 +39,9 @@ public class VisionTargeting2 {
 		}
 	};
 
+	// showVideo will display images to the smartdashboard
+	public boolean showVideo = true;
+
 	USBCamera camera;
 	double AREA_MINIMUM;
 	double LONG_RATIO;
@@ -42,6 +49,7 @@ public class VisionTargeting2 {
 	double SCORE_MIN;
 	double VIEW_ANGLE;
 	Image frame;
+
 	Image binaryFrame;
 	int imaqError;
 	int session;
@@ -77,6 +85,7 @@ public class VisionTargeting2 {
 	double horizontalPixel;
 	double verticalPixel;
 	double angle;
+	double vertSetpointTicks;
 	double crosshair;
 	boolean cameraStarted = true;
 	boolean cameraWorks = true;
@@ -85,13 +94,21 @@ public class VisionTargeting2 {
 	Rect r;
 
 	public boolean targetAquired = false;
+	private double rawHeading = 0;
+	private double rawHoodTicks = 0;
+	private double capturedHeading = 0;
+	private double capturedTick = 0;
 
 	public boolean init() {
 		cameraStarted = true;
 		try {
 			camera = new USBCamera("cam2");
 			camera.setSize(320, 240);
-			// camera.setBrightness(4);
+			camera.setFPS(10);
+			camera.setBrightness(10);
+			camera.setExposureManual(0);
+			camera.setWhiteBalanceManual(5000);
+			camera.updateSettings();
 			camera.openCamera();
 			camera.startCapture();
 		} catch (Exception ex) {
@@ -108,30 +125,10 @@ public class VisionTargeting2 {
 			criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA,
 					AREA_MINIMUM, 100.0, 0, 0);
 			filterOptions = new NIVision.ParticleFilterOptions2(0, 0, 1, 1);
-			// NIVision.IMAQdxConfigureGrab(session);
-			// NIVision.IMAQdxStartAcquisition(session);
-			// TARGET_HUE_RANGE = new NIVision.Range(54, 96);
-			// TARGET_SAT_RANGE = new NIVision.Range(188, 255);
-			// TARGET_VAL_RANGE = new NIVision.Range(69, 255);
 
-			// 3:22
-
-			// TARGET_HUE_RANGE = new NIVision.Range(71, 132);
-			// TARGET_SAT_RANGE = new NIVision.Range(236, 255);
-			// TARGET_VAL_RANGE = new NIVision.Range(135, 238);
-
-			// BARRA
-			// TARGET_HUE_RANGE = new NIVision.Range(32, 110);
-			// TARGET_SAT_RANGE = new NIVision.Range(143, 255);
-			// TARGET_VAL_RANGE = new NIVision.Range(45, 255);
-
-			// TARGET_HUE_RANGE = new NIVision.Range(70, 175);
-			// TARGET_SAT_RANGE = new NIVision.Range(100, 255);
-			// TARGET_VAL_RANGE = new NIVision.Range(85, 255);
-
-			TARGET_HUE_RANGE = new NIVision.Range(44, 157);
-			TARGET_SAT_RANGE = new NIVision.Range(0, 177);
-			TARGET_VAL_RANGE = new NIVision.Range(245, 255);
+			TARGET_HUE_RANGE = new NIVision.Range(90, 150);
+			TARGET_SAT_RANGE = new NIVision.Range(120, 255);
+			TARGET_VAL_RANGE = new NIVision.Range(90, 255);
 
 			// filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			width = 0;
@@ -149,19 +146,20 @@ public class VisionTargeting2 {
 		SHORT_RATIO = 1.4;
 		SCORE_MIN = 75.0;
 		VIEW_ANGLE = 49.4;
-		verticalImage = 180;
-		horizontalImage = 240;
+		verticalImage = 240 / 2;
+		horizontalImage = 320 / 2;
 		distance = -1;
 	}
-	
-	
-	
-	
-	
 
 	private boolean getImage() {
 		cameraWorks = true;
 		try {
+			//
+
+			rawHeading = this.ahrs.ahrs.getAngle();
+			// get canTanlon ticks for hood
+			rawHoodTicks = hood.getHoodEnc();
+			// rawHoodTicks = 0;
 
 			// camera.startCapture();
 
@@ -309,6 +307,9 @@ public class VisionTargeting2 {
 			NIVision.imaqDrawShapeOnImage(binaryFrame, binaryFrame, r, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 150f);
 			centerRec[0] = bestCenterRec;
 			centerRec[1] = boundingTop;
+			this.capturedHeading = this.rawHeading;
+			this.capturedTick = this.rawHoodTicks;
+
 		}
 		targetAquired = targetOk;
 	}
@@ -332,12 +333,22 @@ public class VisionTargeting2 {
 	}
 
 	public void processImage() {
+
 		if (getImage()) {
 			segmentImage();
 			drawRectangle();
 			// drawCenterCrosshairs();
 			// drawCenterRecCrosshairs();
-			CameraServer.getInstance().setImage(binaryFrame);
+
+			// dd = CameraServer.getInstance();
+			// dd.setQuality(50);
+			// dd.startAutomaticCapture("cam1");
+			// the camera name (ex "cam0") can be found through the roborio web
+			// interface
+			if (showVideo)
+				CameraServer.getInstance().setImage(binaryFrame);
+			// Timer.delay(.2);
+
 		}
 	}
 
@@ -382,27 +393,39 @@ public class VisionTargeting2 {
 	}
 
 	public double getAngle() {
-		// double Tpixels = bottomRec;
-		// double TpixelsV = leftRec;
-		// double pixel = Math.abs(0 - recCenterXCoordinate());
-		// double pixelV = Math.abs(0 - recCenterYCoordinate());
-		// double feet = (Tft*pixel)/Tpixels;
-		// double feetV = (Tft*pixelV)/TpixelsV; angle =
-		// Math.atan2(feet/getDistance(),
-		// feetV/getDistance())*(180/Math.PI);
 
-		// double pixelsToMove = 0 - centerRec[0];
-		// horizontalPixel = horizontalImage * 2;
-		// double Tpixel = Math.abs(boundingLeft - boundingRight);
-		// double DistanceToMove = pixelsToMove * Tft / Tpixel;
-		// angle = Math.asin(DistanceToMove / getDistance()) * (180 / Math.PI);
-		// System.out.println("angle: " + angle);
-		double Tpixels = bottomRec;
-		double pixel = Math.abs(0 - recCenterXCoordinate());
-		double feet = (Tft * pixel) / Tpixels;
-		angle = Math.atan(feet / getDistance()) * (180 / Math.PI);
-		// System.out.println(" " + angle);
+		/*
+		 * double Tpixels = bottomRec; double pixel = Math.abs(0 -
+		 * recCenterXCoordinate()); double feet = (Tft * pixel) / Tpixels; angle
+		 * = Math.atan(feet / getDistance()) * (180 / Math.PI); //
+		 * System.out.println(" " + angle);
+		 * 
+		 */
+		double hoodOffsetRatio = 0.61;
+		// Adjust values to adjust the sights!
+		double hoodZeroPoint = 700; // ticks
+		double headingZeroPoint = 0; // deg
+
+		// double cameraSpan =
+		// Double.parseDouble(SmartDashboard.getString("DB/String 0"));
+		double cameraSpanH = 0.154;
+		double cameraSpanV = 703;
+		double recCenterX = recCenterXCoordinate();
+		angle = this.capturedHeading + ((recCenterX + (width * hoodOffsetRatio)) * cameraSpanH) + headingZeroPoint;
+		if (angle > 360)
+			angle = angle - 360.0;
+		if (angle < 0)
+			angle = angle + 360.0;
+		// System.out.println("*********rec center x:" + recCenterX);
+		this.vertSetpointTicks = this.capturedTick + (this.recCenterYCoordinate() * cameraSpanV) + hoodZeroPoint;
+		System.out.println("                                                                              recCenterY "
+				+ this.recCenterYCoordinate());
 		return angle;
+	}
+
+	public double getHoodSpoint() {
+		System.out.println("                 Hood Spoint " + this.vertSetpointTicks);
+		return this.vertSetpointTicks;
 	}
 
 	public void processImageOriginal() {

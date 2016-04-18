@@ -10,11 +10,13 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 public class Hood {
 
 	// 560783
-	public final double HOOD_POS_OUTERWORKS = 537000, HOOD_POS_BATTER = 646000, HOOD_POS_SAFE = 252346;
+	// 537000
+	public final double HOOD_POS_OUTERWORKS = 555000, HOOD_POS_BATTER = 646000, HOOD_POS_SAFE = 252346,
+			HOOD_POS_THE_6 = 620000;
 	public boolean hoodIsActuallyHomed = false;
 	private double hoodCurrent = 0;
 	private double hoodOperationCurrentLimit = 10;
-	private double hoodHomingCurrentLimit = 5;
+	private double hoodHomingCurrentLimit = 2;
 
 	private T20CANTalon hoodTalon = new T20CANTalon(Constants.HOOD_MOTOR_PORT);
 
@@ -78,7 +80,7 @@ public class Hood {
 		if (!hoodTalon.homed) {
 			hoodTalon.setPID(.05, 0, 0);
 			hoodTalon.setPosition(0);
-			hoodTalon.set(-12000);
+			hoodTalon.set(-11000);
 
 			if (hoodCurrent > hoodHomingCurrentLimit) {
 				hoodTalon.setPosition(0);
