@@ -29,7 +29,8 @@ public class Drivetrain extends Scorpio {
 	}
 
 	public driveModes driveMode = driveModes.ROBOT_CENTRIC;
-	private double headingOffset;
+	private double headingOffset; // For auto, difference between setpoint and
+									// pv
 
 	public Drivetrain() {
 		followerLeft.changeControlMode(TalonControlMode.Follower);
@@ -71,25 +72,26 @@ public class Drivetrain extends Scorpio {
 	}
 
 	public void drive(double speed, double heading) {
-		printAVGCurrent();
+		// printAVGCurrent();
 		switch (driveMode) {
 		case ROBOT_CENTRIC:
 			headingSetpoint = 0;
-			// drivetrainHeadingPID.setPID(.05, .00052, .12);
+			drivetrainHeadingPID.setPID(.05, .00052, .12);
 			// drivetrainHeadingPID.setPID(.1, 0, .6);
 			hood.setAutoTargetHoodPID(0, 0, 0);
 			driveManual(speed, heading);
 			break;
 		case FIELD_CENTRIC:
 			headingSetpoint = 0;
-			// drivetrainHeadingPID.setPID(.05, .00052, .12);
+			drivetrainHeadingPID.setPID(.05, .00052, .12);
 			// drivetrainHeadingPID.setPID(.06, 0.0006, 0.11);
 			drivetrainHeadingPID.setOPRange(-1, 1);
 			hood.setAutoTargetHoodPID(0, 0, 0);
 			driveAuto(speed, heading);
 			break;
 		case CAMERA_TARGET:
-			drivetrainHeadingPID.setPID(.06, 0.0006, 0.11);
+			// drivetrainHeadingPID.setPID(.06, 0.0006, 0.11);
+			drivetrainHeadingPID.setPID(.05, .00052, .12);
 			drivetrainHeadingPID.setOPRange(-1, 1);
 			hood.setAutoTargetHoodPID(.003, 0.00001, .00000001);
 			driveCamera(speed / 2);
@@ -101,31 +103,17 @@ public class Drivetrain extends Scorpio {
 		getCameraValues();
 
 		double hoodSetpoint = width * (1.53) - 50.0;
-		// System.out.println(" " + width);
 		if (headingSetpoint == 0) {
 			headingSetpoint = vision.vision.getAngle();
 		}
-		// if (Math.abs(headingSetpoint - ahrs.ahrs.getAngle()) < 7) {
-		// // drivetrainHeadingPID.setPID(.04, 0.0006, 0.05);
-		// drivetrainHeadingPID.setPID(.08, 0.001, 0.075);
-		// } else {
-		// drivetrainHeadingPID.setPID(.06, 0.0006, 0.075);
-		// }
 		if (vision.vision.targetAquired) {
-			// // filter heading setpoint .9 to .1 new
-			// headingSetpoint = (headingSetpoint * .9)
-			// + ((ahrs.ahrs.getAngle() + ((recCenterX + (width *
-			// hoodOffsetRatio)) * cameraSpan)) * .1);
-			// headingSetpoint = ahrs.ahrs.getAngle() + ((recCenterX + (width *
-			// hoodOffsetRatio)) * cameraSpan);
 			headingSetpoint = vision.vision.getAngle();
 			hood.moveHoodPositon(vision.vision.getHoodSpoint());
 			drivetrainHeadingPID.setSP(headingSetpoint);
-			// drivetrainHeadingPID.setSP(ahrs.ahrs.getAngle());
-			// System.out.println(" heading SP " + headingSetpoint + " ahrs: "
-			// + ahrs.ahrs.getAngle());
-			// drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
+			drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
 			headingOffset = Math.abs(headingSetpoint - ahrs.ahrs.getAngle());
+			System.out.println(
+					"                                       hsp " + headingSetpoint + " pv " + ahrs.ahrs.getAngle());
 		} else {
 			headingOffset = -1;
 			hood.moveHoodPositon(hood.getHoodEnc());
@@ -138,27 +126,13 @@ public class Drivetrain extends Scorpio {
 	private void driveAuto(double speed, double heading) {
 		// printAVGCurrent();
 		speed = -speed;
-		double p = 0.0, i = 0.0, d = 0.0;
-		try {
-			p = Double.parseDouble(SmartDashboard.getString("DB/String 1"));
-			i = Double.parseDouble(SmartDashboard.getString("DB/String 2"));
-			d = Double.parseDouble(SmartDashboard.getString("DB/String 3"));
-			if (p == 0) {
-				SmartDashboard.putString("DB/String 1", "0.06");
-				SmartDashboard.putString("DB/String 2", "0.0006");
-				SmartDashboard.putString("DB/String 3", "0.11");
-			} // if
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		drivetrainHeadingPID.setPID(p, i, d);
 		drivetrainHeadingPID.setSP(heading);
 		drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
 		masterRight.set((-1 * speed + -drivetrainHeadingPID.getOP()) * scaling);
 		masterLeft.set(((speed) + (-drivetrainHeadingPID.getOP())) * scaling);
 		followerLeft.set(0);
 		followerRight.set(2);
-		headingOffset = Math.abs(heading - ahrs.ahrs.getAngle());
+		headingOffset = -1;
 
 	}
 

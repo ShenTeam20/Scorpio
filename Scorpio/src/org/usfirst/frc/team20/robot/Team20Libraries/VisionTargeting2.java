@@ -403,12 +403,12 @@ public class VisionTargeting2 extends Scorpio {
 		 */
 		double hoodOffsetRatio = 0.61;
 		// Adjust values to adjust the sights!
-		double hoodZeroPoint = 700; // ticks
-		double headingZeroPoint = 0; // deg
+		double hoodZeroPoint = -700; // ticks
+		double headingZeroPoint = -3.5; // deg
 
-		// double cameraSpan =
-		// Double.parseDouble(SmartDashboard.getString("DB/String 0"));
-		double cameraSpanH = 0.154;
+		// double cameraSpanH =
+		// Double.parseDouble(SmartDashboard.getString("DB/String 6"));
+		double cameraSpanH = 0.22;
 		double cameraSpanV = 703;
 		double recCenterX = recCenterXCoordinate();
 		angle = this.capturedHeading + ((recCenterX + (width * hoodOffsetRatio)) * cameraSpanH) + headingZeroPoint;

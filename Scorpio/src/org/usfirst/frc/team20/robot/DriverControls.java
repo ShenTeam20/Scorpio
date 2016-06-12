@@ -18,11 +18,6 @@ public class DriverControls extends Scorpio {
 	private long mills = 0;
 
 	public void driverControls() {
-
-		if (driverJoy.getButtonRS()) {
-			navXOn = !navXOn;
-		}
-
 		if (Math.abs(driverJoy.getAxisTrigger()) > 0.2 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			drivetrain.setRobotCentric();
 			heading = drivetrain.getHeading();
@@ -34,7 +29,7 @@ public class DriverControls extends Scorpio {
 					heading = drivetrain.getHeading();
 				}
 				if (ahrs.ahrs.isConnected() && navXOn) {
-					// drivetrain.setFieldCentric();
+					drivetrain.setFieldCentric();
 				}
 			}
 		}
@@ -70,15 +65,21 @@ public class DriverControls extends Scorpio {
 
 		// Tomahawk Controls
 		if (driverJoy.getButtonB()) {
+			if (hood.hoodIsActuallyHomed && hood.getHoodEnc() < 30000) {
+				operator.hoodPositonHolder = 55000;
+			}
 			tomahawks.actuateTomahawks();
 		}
 		if (driverJoy.getButtonX()) {
-			if (hood.hoodIsActuallyHomed && hood.getHoodEnc() < 20000) {
-				operator.hoodPositonHolder = 25000;
+			if (hood.hoodIsActuallyHomed && hood.getHoodEnc() < 30000) {
+				operator.hoodPositonHolder = 55000;
 			}
 			tomahawks.retractTomahawks();
 		}
 
+		if (driverJoy.getPOV() == 180) {
+			hood.setHoodHomeState(true);
+		}
 		if (driverJoy.getPOV() == 0) {
 			salt.addSalt();
 		} else {

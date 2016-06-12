@@ -11,12 +11,14 @@ public class Hood {
 
 	// 560783
 	// 537000
-	public final double HOOD_POS_OUTERWORKS = 555000, HOOD_POS_BATTER = 646000, HOOD_POS_SAFE = 252346,
-			HOOD_POS_THE_6 = 620000;
+	
+	//646000
+	public final double HOOD_POS_OUTERWORKS = 555000, HOOD_POS_BATTER = 638500, HOOD_POS_SAFE = 252346,
+			HOOD_POS_THE_6 = 620000, HOOD_POS_OFFSET_AUTO = 302654;
 	public boolean hoodIsActuallyHomed = false;
 	private double hoodCurrent = 0;
 	private double hoodOperationCurrentLimit = 10;
-	private double hoodHomingCurrentLimit = 2;
+	private double hoodHomingCurrentLimit = 3.5;
 
 	private T20CANTalon hoodTalon = new T20CANTalon(Constants.HOOD_MOTOR_PORT);
 
@@ -66,6 +68,10 @@ public class Hood {
 		return hoodTalon.homed;
 	}
 
+	public void setHoodHomeState(boolean bool) {
+		hoodTalon.homed = bool;
+	}
+
 	public void enableHoodControl() {
 		hoodTalon.enableControl();
 	}
@@ -77,10 +83,11 @@ public class Hood {
 
 	public void hoodHomeWatchdog() {
 		hoodCurrent = (hoodCurrent * .99) + (hoodTalon.getOutputCurrent() * .01);
+		System.out.println("                        hood curr: " + hoodCurrent);
 		if (!hoodTalon.homed) {
 			hoodTalon.setPID(.05, 0, 0);
 			hoodTalon.setPosition(0);
-			hoodTalon.set(-11000);
+			hoodTalon.set(-18000);
 
 			if (hoodCurrent > hoodHomingCurrentLimit) {
 				hoodTalon.setPosition(0);

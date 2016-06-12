@@ -28,12 +28,13 @@ public class T20AutoAutoTarget extends Scorpio implements T20Command {
 			isStarted = !isStarted;
 		}
 
-		if (!(drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 1.5)) {
+		if (!(drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 4)) {
 			sysTime = System.currentTimeMillis();
+			flywheel.flywheelToSpeed(2100);
 		}
 
-		if (drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 1.5
-				&& System.currentTimeMillis() > sysTime + 500) {
+		if (drivetrain.getHeadingOffSet() > 0 && drivetrain.getHeadingOffSet() < 4
+				&& System.currentTimeMillis() > sysTime + 1000) {
 			System.out.println("</Auto Targeting" + ">");
 			System.out.println("<Auto Firing" + ">");
 			flywheel.flywheelToSpeed(flywheel.FLYSPEED_OUTERWORKS);
@@ -47,7 +48,7 @@ public class T20AutoAutoTarget extends Scorpio implements T20Command {
 			}
 
 		}
-		if (DriverStation.getInstance().getMatchTime() < .5) {
+		if (DriverStation.getInstance().getMatchTime() < .2) {
 			System.out.println("</Auto Firing>");
 			lance.stopIntake();
 			indexer.stopIndexer();

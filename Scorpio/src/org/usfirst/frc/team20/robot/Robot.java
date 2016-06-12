@@ -25,13 +25,13 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInit() {
 		Scorpio.smartDashAutoChooser.createAutoMode();
-		Scorpio.ahrs.ahrs.reset();
 		Scorpio.ahrs.ahrs.getAngle();
 	}
 
 	public void autonomousPeriodic() {
 		Scorpio.vision.vision.processImage();
 		Scorpio.autoModes.executeMainAutoMode();
+
 	}
 
 	public void teleopPeriodic() {

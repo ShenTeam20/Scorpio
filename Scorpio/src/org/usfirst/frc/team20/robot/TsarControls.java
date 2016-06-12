@@ -44,8 +44,7 @@ public class TsarControls extends Scorpio {
 					heading = drivetrain.getHeading();
 				}
 				if (ahrs.ahrs.isConnected() && navXOn)
-					;
-				// drivetrain.setFieldCentric();
+					drivetrain.setFieldCentric();
 			}
 		}
 

@@ -20,8 +20,8 @@ public class OperatorControls extends Scorpio {
 		lance.lanceMovementWatchDog();
 		// System.out.println(hood.getHoodEnc());
 		flywheel.getSpeed();
-		// System.out.println(" left" + drivetrain.getLeftSideEncVal() + "right"
-		// + drivetrain.getRightSideEncVal());
+		// System.out.println(" Camera Side " + drivetrain.getLeftSideEncVal() +
+		// " Non Camera Side " + drivetrain.getRightSideEncVal());
 		// lance.lanceSensors();
 
 		// Lance controls
@@ -29,6 +29,7 @@ public class OperatorControls extends Scorpio {
 			lance.toggleLance();
 			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() > hood.HOOD_POS_SAFE && hood.hoodIsActuallyHomed) {
 				hoodPositonHolder = hood.HOOD_POS_SAFE;
+				flyspeedHolder = flywheel.FLYSPEED_STOP;
 			}
 		}
 
@@ -64,6 +65,11 @@ public class OperatorControls extends Scorpio {
 		}
 
 		if (operatorJoy.getAxisTrigger() > .8) {
+			flywheel.fire();
+		}
+
+		if (operatorJoy.getAxisTrigger() < -.8 && drivetrain.getHeadingOffSet() < 3 && drivetrain.getHeadingOffSet() > 0
+				&& flywheel.getSpeed() > 8200) {
 			flywheel.fire();
 		}
 
@@ -113,8 +119,14 @@ public class OperatorControls extends Scorpio {
 		}
 
 		flywheel.flywheelToSpeed(flyspeedHolder);
-		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && hood.getHoodHomeState()) {
+		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && hood.getHoodHomeState()
+				&& !lance.getMagSwitchIsExtened()) {
 			hood.moveHoodPositon(hoodPositonHolder);
+		} else {
+			hoodPositonHolder = hood.getHoodEnc();
 		}
+		// System.out.println(" hood pos holder: " + hoodPositonHolder + " hood
+		// location: "
+		// + hood.getHoodEnc() + " flyspeedholder: " + flyspeedHolder);
 	}
 }
