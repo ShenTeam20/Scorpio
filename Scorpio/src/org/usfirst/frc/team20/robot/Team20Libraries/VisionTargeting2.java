@@ -111,6 +111,7 @@ public class VisionTargeting2 extends Scorpio {
 			camera.updateSettings();
 			camera.openCamera();
 			camera.startCapture();
+			
 		} catch (Exception ex) {
 			System.out.println("Error when starting the camera:");
 		}
@@ -154,15 +155,9 @@ public class VisionTargeting2 extends Scorpio {
 	private boolean getImage() {
 		cameraWorks = true;
 		try {
-			//
-
-			rawHeading = this.ahrs.ahrs.getAngle();
 			// get canTanlon ticks for hood
 			rawHoodTicks = hood.getHoodEnc();
 			// rawHoodTicks = 0;
-
-			// camera.startCapture();
-
 			camera.getImage(frame);
 
 			// NIVision.IMAQdxGrab(session, frame, 1);
@@ -179,48 +174,6 @@ public class VisionTargeting2 extends Scorpio {
 		imaqError = NIVision.imaqParticleFilter4(particleBinaryFrame, binaryFrame, criteria, filterOptions, null);
 		numParticles = NIVision.imaqCountParticles(particleBinaryFrame, 1);
 	}
-	// test code jjb 02-21-2016 return just one rectangle.
-
-	private void drawRectangle_test() {
-		int testWidth = 0;
-		Rect r = null;
-		for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {
-			ParticleReport par = new ParticleReport();
-			par.Area = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
-					NIVision.MeasurementType.MT_AREA);
-			par.BoundingRectTop = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
-					NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
-			par.BoundingRectLeft = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
-					NIVision.MeasurementType.MT_BOUNDING_RECT_LEFT);
-			par.BoundingRectBottom = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
-					NIVision.MeasurementType.MT_BOUNDING_RECT_BOTTOM);
-			par.BoundingRectRight = NIVision.imaqMeasureParticle(particleBinaryFrame, particleIndex, 0,
-					NIVision.MeasurementType.MT_BOUNDING_RECT_RIGHT);
-			if ((Math.abs((int) (par.BoundingRectLeft - par.BoundingRectRight)) > testWidth)) {
-				testWidth = Math.abs((int) (par.BoundingRectLeft - par.BoundingRectRight));
-				r = new NIVision.Rect((int) par.BoundingRectTop, (int) par.BoundingRectLeft,
-						Math.abs((int) (par.BoundingRectTop - par.BoundingRectBottom)),
-						Math.abs((int) (par.BoundingRectLeft - par.BoundingRectRight)));
-				// NIVision.imaqDrawShapeOnImage(binaryFrame, binaryFrame, r,
-				// DrawMode.DRAW_VALUE,
-				// ShapeMode.SHAPE_RECT, 150f);
-				leftRec = par.BoundingRectLeft - horizontalImage;
-				rightRec = par.BoundingRectRight - horizontalImage;
-				topRec = -(par.BoundingRectTop - verticalImage);
-				bottomRec = -(par.BoundingRectBottom - verticalImage);
-				centerRec = new double[2];
-				centerRec[0] = (leftRec + rightRec) / 2;
-				centerRec[1] = (topRec + bottomRec) / 2;
-				boundingRight = par.BoundingRectRight;
-				boundingLeft = par.BoundingRectLeft;
-				boundingTop = par.BoundingRectTop;
-				boundingBottom = par.BoundingRectBottom;
-				crosshair = par.BoundingRectTop;
-			}
-		}
-		NIVision.imaqDrawShapeOnImage(binaryFrame, binaryFrame, r, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 150f);
-	}
-
 	private boolean betterCenter(double newLoc, double loc, double width, double setpoint) {
 		double targetLoc = (width * .6) + setpoint;
 		if (Math.abs(newLoc - targetLoc) < Math.abs(loc - targetLoc))
@@ -264,17 +217,15 @@ public class VisionTargeting2 extends Scorpio {
 			// System.out.println("AREA RATIO" + par[particleIndex].AreaRatio);
 			if (thisWidth > 30 && thisWidth < 117 && par[particleIndex].AreaRatio < .33 && aspectRatio > .3
 					&& aspectRatio < 1.5) {
-				// System.out.println("<in if>");
 				// Here we have a valid candidate.
 				double tempLeftRec, tempRightRec, tempTopRec, tempBottomRec;
+				
 				tempLeftRec = par[particleIndex].BoundingRectLeft - horizontalImage;
 				tempRightRec = par[particleIndex].BoundingRectRight - horizontalImage;
 				tempTopRec = -(par[particleIndex].BoundingRectTop - verticalImage);
 				tempBottomRec = -(par[particleIndex].BoundingRectBottom - verticalImage);
-
-				double bestDistance = 0;
-				double tempDistance;
 				double tempCenterRec = (tempLeftRec + tempRightRec) / 2;
+
 
 				if (!targetOk || betterCenter(tempCenterRec, bestCenterRec, thisWidth, 0)) {
 					// System.out.println(onOffRatio + " " + thisWidth + " " +
@@ -314,39 +265,14 @@ public class VisionTargeting2 extends Scorpio {
 		targetAquired = targetOk;
 	}
 
-	private void drawCenterCrosshairs() {
-		Point startH = new NIVision.Point((int) (horizontalImage - 10), (int) (verticalImage));
-		Point endH = new NIVision.Point((int) (horizontalImage + 10), (int) verticalImage);
-		NIVision.imaqDrawLineOnImage(binaryFrame, binaryFrame, DrawMode.DRAW_VALUE, startH, endH, 200f);
-		Point startV = new NIVision.Point((int) (horizontalImage), (int) (verticalImage - 10));
-		Point endV = new NIVision.Point((int) (horizontalImage), (int) (verticalImage + 10));
-		NIVision.imaqDrawLineOnImage(binaryFrame, binaryFrame, DrawMode.DRAW_VALUE, startV, endV, 200f);
-	}
-
-	private void drawCenterRecCrosshairs() {
-		Point startHrec = new NIVision.Point((int) (centerRec[0] + horizontalImage - 10), (int) (crosshair + 10));
-		Point endHrec = new NIVision.Point((int) (centerRec[0] + horizontalImage + 10), (int) (crosshair - 10));
-		NIVision.imaqDrawLineOnImage(binaryFrame, binaryFrame, DrawMode.DRAW_VALUE, startHrec, endHrec, 150f);
-		Point startVrec = new NIVision.Point((int) (centerRec[0] + horizontalImage - 10), (int) (crosshair - 10));
-		Point endVrec = new NIVision.Point((int) (centerRec[0] + horizontalImage + 10), (int) (crosshair + 10));
-		NIVision.imaqDrawLineOnImage(binaryFrame, binaryFrame, DrawMode.DRAW_VALUE, startVrec, endVrec, 150f);
-	}
-
 	public void processImage() {
 
 		if (getImage()) {
 			segmentImage();
 			drawRectangle();
-			// drawCenterCrosshairs();
-			// drawCenterRecCrosshairs();
-
-			// dd = CameraServer.getInstance();
-			// dd.setQuality(50);
-			// dd.startAutomaticCapture("cam1");
-			// the camera name (ex "cam0") can be found through the roborio web
-			// interface
+				// interface
 			if (showVideo)
-				CameraServer.getInstance().setImage(frame);
+				CameraServer.getInstance().setImage(binaryFrame);
 			// Timer.delay(.2);
 
 		}
@@ -404,11 +330,9 @@ public class VisionTargeting2 extends Scorpio {
 		double hoodOffsetRatio = 0.61;
 		// Adjust values to adjust the sights!
 		double hoodZeroPoint = -700; // ticks
-		double headingZeroPoint = -3.5; // deg
+		double headingZeroPoint = 0; // deg
 
-		// double cameraSpanH =
-		// Double.parseDouble(SmartDashboard.getString("DB/String 6"));
-		double cameraSpanH = 0.22;
+		double cameraSpanH = Double.parseDouble(SmartDashboard.getString("DB/String 6"));
 		double cameraSpanV = 703;
 		double recCenterX = recCenterXCoordinate();
 		angle = this.capturedHeading + ((recCenterX + (width * hoodOffsetRatio)) * cameraSpanH) + headingZeroPoint;
@@ -416,7 +340,6 @@ public class VisionTargeting2 extends Scorpio {
 			angle = angle - 360.0;
 		if (angle < 0)
 			angle = angle + 360.0;
-		// System.out.println("*********rec center x:" + recCenterX);
 		this.vertSetpointTicks = this.capturedTick + (this.recCenterYCoordinate() * cameraSpanV) + hoodZeroPoint;
 		System.out.println("                                                                              recCenterY "
 				+ this.recCenterYCoordinate());
@@ -428,23 +351,5 @@ public class VisionTargeting2 extends Scorpio {
 		return this.vertSetpointTicks;
 	}
 
-	public void processImageOriginal() {
-		getImage();
-		drawRectangle();
-		// center crosshairs
-		Point startH = new NIVision.Point((int) (horizontalImage - 10), (int) (verticalImage));
-		Point endH = new NIVision.Point((int) (horizontalImage + 10), (int) verticalImage);
-		NIVision.imaqDrawLineOnImage(frame, binaryFrame, DrawMode.DRAW_VALUE, startH, endH, 200f);
-		Point startV = new NIVision.Point((int) (horizontalImage), (int) (verticalImage - 10));
-		Point endV = new NIVision.Point((int) (horizontalImage), (int) (verticalImage + 10));
-		NIVision.imaqDrawLineOnImage(frame, binaryFrame, DrawMode.DRAW_VALUE, startV, endV, 200f);
-		// rectangle center crosshairs
-		Point startHrec = new NIVision.Point((int) (centerRec[0] + horizontalImage - 10), (int) (crosshair + 10));
-		Point endHrec = new NIVision.Point((int) (centerRec[0] + horizontalImage + 10), (int) (crosshair - 10));
-		NIVision.imaqDrawLineOnImage(frame, binaryFrame, DrawMode.DRAW_VALUE, startHrec, endHrec, 150f);
-		Point startVrec = new NIVision.Point((int) (centerRec[0] + horizontalImage - 10), (int) (crosshair - 10));
-		Point endVrec = new NIVision.Point((int) (centerRec[0] + horizontalImage + 10), (int) (crosshair + 10));
-		NIVision.imaqDrawLineOnImage(frame, binaryFrame, DrawMode.DRAW_VALUE, startVrec, endVrec, 150f);
-		// TODO CameraServer.getInstance().setImage(frame);
-	}
+
 }

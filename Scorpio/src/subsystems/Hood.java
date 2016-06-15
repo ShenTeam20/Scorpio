@@ -76,7 +76,7 @@ public class Hood extends Scorpio {
 
 	public void hoodHomeWatchDog() {
 		if (!hoodIsActuallyHomed) {
-			hoodTalon.setPID(.5, 0, 0);
+			hoodTalon.setPID(.05, 0, 0);
 			hoodTalon.setPosition(0);
 			hoodTalon.set(3000);
 		}

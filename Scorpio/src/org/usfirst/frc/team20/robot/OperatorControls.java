@@ -8,6 +8,7 @@ public class OperatorControls extends Scorpio {
 
 	protected T20GamePad operatorJoy = new T20GamePad(T20GamePad.JS_TYPE_XBOX, 1);
 	public double flyspeedHolder = 0, hoodPositonHolder = 0;
+	private boolean hoodHelper = false;
 
 	public OperatorControls() {
 
@@ -95,9 +96,19 @@ public class OperatorControls extends Scorpio {
 			flyspeedHolder = flywheel.FLYSPEED_OUTERWORKS;
 		}
 		if (operatorJoy.getPOV() == 180) {
-			hood.hoodIsActuallyHomed = false;
+			hoodHelper = true;
 			flyspeedHolder = flywheel.FLYSPEED_STOP;
 		}
+
+		if (hoodHelper) {
+			hoodPositonHolder = -2000;
+			if (hood.getHoodEnc() > -2100) {
+				hood.hoodIsActuallyHomed = false;
+				flyspeedHolder = flywheel.FLYSPEED_STOP;
+				hoodHelper = false;
+			}
+		}
+
 		// END HOOD CONTROL
 
 		// RENABLE THE HOOD
