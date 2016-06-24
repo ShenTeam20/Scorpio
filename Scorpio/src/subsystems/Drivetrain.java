@@ -10,9 +10,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain extends Scorpio {
-	// 8500
 	private final double scaling = 8500;
-	// 10000
 
 	private double recCenterX = 0, recCenterY = 0, width = 0, height = 0, headingSetpoint = 0;
 
@@ -35,8 +33,6 @@ public class Drivetrain extends Scorpio {
 	public Drivetrain() {
 		followerLeft.changeControlMode(TalonControlMode.Follower);
 		followerRight.changeControlMode(TalonControlMode.Follower);
-		masterLeft.changeControlMode(TalonControlMode.Speed);
-		masterRight.changeControlMode(TalonControlMode.Speed);
 		masterLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		masterRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		masterLeft.enableControl();
@@ -93,34 +89,30 @@ public class Drivetrain extends Scorpio {
 			// drivetrainHeadingPID.setPID(.06, 0.0006, 0.11);
 			drivetrainHeadingPID.setPID(.05, .00052, .12);
 			drivetrainHeadingPID.setOPRange(-1, 1);
-			hood.setAutoTargetHoodPID(.003, 0.00001, .00000001);
 			driveCamera(speed / 2);
 		}
 	}
 
 	private void driveCamera(double speed) {
+		masterLeft.changeControlMode(TalonControlMode.Speed);
+		masterRight.changeControlMode(TalonControlMode.Speed);
 		speed = -speed;
 		getCameraValues();
 
-		double hoodSetpoint = width * (1.53) - 50.0;
 		if (headingSetpoint == 0) {
 			headingSetpoint = vision.vision.getAngle();
 		}
 		if (vision.vision.targetAquired) {
 			headingSetpoint = vision.vision.getAngle();
-			hood.moveHoodPositon(vision.vision.getHoodSpoint());
 			drivetrainHeadingPID.setSP(headingSetpoint);
 			drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
 			headingOffset = Math.abs(headingSetpoint - ahrs.ahrs.getAngle());
-			System.out.println(
-					"                                       hsp " + headingSetpoint + " pv " + ahrs.ahrs.getAngle());
 		} else {
 			headingOffset = -1;
-			hood.moveHoodPositon(hood.getHoodEnc());
 			drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
 		}
-		masterRight.set((-1 * speed + -drivetrainHeadingPID.getOP()) * scaling);
-		masterLeft.set(((speed) + (-drivetrainHeadingPID.getOP())) * scaling);
+		masterRight.set((-1 * speed + -drivetrainHeadingPID.getOP()));
+		masterLeft.set(((speed) + (-drivetrainHeadingPID.getOP())));
 	}
 
 	private void driveAuto(double speed, double heading) {
@@ -128,8 +120,8 @@ public class Drivetrain extends Scorpio {
 		speed = -speed;
 		drivetrainHeadingPID.setSP(heading);
 		drivetrainHeadingPID.setPV(ahrs.ahrs.getAngle());
-		masterRight.set((-1 * speed + -drivetrainHeadingPID.getOP()) * scaling);
-		masterLeft.set(((speed) + (-drivetrainHeadingPID.getOP())) * scaling);
+		masterRight.set((-1 * speed + -drivetrainHeadingPID.getOP()));
+		masterLeft.set(((speed) + (-drivetrainHeadingPID.getOP())));
 		followerLeft.set(0);
 		followerRight.set(2);
 		headingOffset = -1;
@@ -147,10 +139,22 @@ public class Drivetrain extends Scorpio {
 				+ "  sRightCur: " + sRightCurrent);
 	}
 
-	private void driveManual(double speed, double heading) {
+	private void driveManualWithEncoders(double speed, double heading) {
 		speed = -speed * 1.4;
 		masterRight.set((-speed - heading) * scaling);
 		masterLeft.set(((speed) - heading) * scaling);
+		followerLeft.set(0);
+		followerRight.set(2);
+		headingOffset = -1;
+
+	}
+
+	private void driveManual(double speed, double heading) {
+		masterLeft.changeControlMode(TalonControlMode.PercentVbus);
+		masterRight.changeControlMode(TalonControlMode.PercentVbus);
+		speed = -speed;
+		masterRight.set((-speed - heading));
+		masterLeft.set(((speed) - heading));
 		followerLeft.set(0);
 		followerRight.set(2);
 		headingOffset = -1;

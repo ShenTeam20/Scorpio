@@ -33,7 +33,7 @@ public class OperatorControls extends Scorpio {
 		// COLLECTOR CONTROL
 		if (operatorJoy.getOneShotButtonY()) {
 			lance.intakeLance();
-			indexer.intakeIndexer();
+			indexer.intakeIndexer(true);
 		}
 
 		if (operatorJoy.getOneShotButtonB()) {
@@ -65,7 +65,7 @@ public class OperatorControls extends Scorpio {
 		// END FLYWHEEL CONTROL
 
 		// FIRE BALL
-		if (operatorJoy.getAxisTrigger() > .8) {
+		if ((operatorJoy.getAxisTrigger() > .8)) {
 			flywheel.fire();
 		}
 
@@ -76,9 +76,6 @@ public class OperatorControls extends Scorpio {
 		// END FIRE BALL
 
 		// Hood CONTROL
-		if (drivetrain.driveMode != driveModes.CAMERA_TARGET && Math.abs(operatorJoy.getAxisRightStickY()) > .2) {
-			hoodPositonHolder += (1000 * operatorJoy.getAxisRightStickY());
-		}
 
 		if (operatorJoy.getPOV() == 270) {
 			if (hood.hoodIsActuallyHomed)
@@ -101,11 +98,11 @@ public class OperatorControls extends Scorpio {
 		}
 
 		if (hoodHelper) {
+			flyspeedHolder = flywheel.FLYSPEED_STOP;
+			hoodHelper = false;
 			hoodPositonHolder = -2000;
 			if (hood.getHoodEnc() > -2100) {
 				hood.hoodIsActuallyHomed = false;
-				flyspeedHolder = flywheel.FLYSPEED_STOP;
-				hoodHelper = false;
 			}
 		}
 

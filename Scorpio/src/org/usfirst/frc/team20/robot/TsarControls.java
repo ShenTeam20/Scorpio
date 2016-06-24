@@ -8,6 +8,8 @@ public class TsarControls extends Scorpio {
 
 	private T20GamePad tsarJoy = new T20GamePad(T20GamePad.JS_TYPE_XBOX, 3);
 
+	private boolean hoodHelper = false;
+
 	public void TsarControls() {
 		tsarJoy.leftStickTolerance = .1;
 	}
@@ -20,6 +22,7 @@ public class TsarControls extends Scorpio {
 
 	public void tsarControls() {
 		indexer.indexerBumpSwitchWatchDog();
+		hood.hoodHomeWatchDog();
 		lance.lanceMovementWatchDog();
 		flywheel.getSpeed();
 		// System.out.println(" left" + drivetrain.getLeftSideEncVal() + "right"
@@ -36,8 +39,9 @@ public class TsarControls extends Scorpio {
 
 					heading = drivetrain.getHeading();
 				}
-				if (ahrs.ahrs.isConnected() && navXOn)
-					drivetrain.setFieldCentric();
+				if (ahrs.ahrs.isConnected() && navXOn) {
+				}
+				// drivetrain.setFieldCentric();
 			}
 		}
 
@@ -72,14 +76,14 @@ public class TsarControls extends Scorpio {
 		// Lance controls
 		if (tsarJoy.getOneShotButtonLB()) {
 			lance.toggleLance();
-			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() > hood.HOOD_POS_SAFE && hood.hoodIsActuallyHomed) {
+			if (!lance.getMagSwitchIsExtened() && hood.getHoodEnc() < hood.HOOD_POS_SAFE && hood.hoodIsActuallyHomed) {
 				hoodPositonHolder = hood.HOOD_POS_SAFE;
 			}
 		}
 
 		if (tsarJoy.getOneShotButtonY()) {
 			lance.intakeLance();
-			indexer.intakeIndexer();
+			indexer.intakeIndexer(true);
 		}
 
 		if (tsarJoy.getOneShotButtonB()) {
@@ -127,7 +131,17 @@ public class TsarControls extends Scorpio {
 			flyspeedHolder = flywheel.FLYSPEED_OUTERWORKS;
 		}
 		if (tsarJoy.getPOV() == 180) {
+			hoodHelper = true;
 			flyspeedHolder = flywheel.FLYSPEED_STOP;
+		}
+
+		if (hoodHelper) {
+			hoodPositonHolder = -2000;
+			if (hood.getHoodEnc() > -2100) {
+				hood.hoodIsActuallyHomed = false;
+				flyspeedHolder = flywheel.FLYSPEED_STOP;
+				hoodHelper = false;
+			}
 		}
 
 		flywheel.flywheelToSpeed(flyspeedHolder);

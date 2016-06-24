@@ -86,7 +86,7 @@ public class AutoModes extends Scorpio {
 	public void createAutoBotsTransformRollOut() {
 		rollOutTree = new T20SeriesNode();
 		rollOutTree.addChild(new T20AutoCommandTomahawksDown());
-		rollOutTree.addChild(new T20AutoCommandHomeHood());
+		rollOutTree.addChild(new T20AutoCommandHoodToLowPosition());
 		rollOutTree.addChild(new T20AutoCommandToggleLance());
 		T20Node secondaryRollOut = new T20ParallelNode();
 		secondaryRollOut.addChild(new T20AutoCommandLanceDown());
@@ -210,8 +210,8 @@ public class AutoModes extends Scorpio {
 		if (!hasRolledOut)
 			turnRollOut.addChild(specialRollOutTree);
 		turnRollOut.addChild(new T20AutoCommandTurnToAngle(turnAngle));
+		turnRollOut.addChild(new T20AutoCommandFlywheelToSpeed(2000));
 		finishWithAHighGoalTree.addChild(turnRollOut);
-		finishWithAHighGoalTree.addChild(new T20AutoCommandHoodToOffsetAuto());
 		T20Node autoTargetTree = new T20ParallelNode();
 		autoTargetTree.addChild(new T20AutoAutoTarget());
 		autoTargetTree.addChild(jostleTree);
@@ -333,7 +333,6 @@ public class AutoModes extends Scorpio {
 		case 2:
 			if (doExtend) {
 				mainAutoNode.addChild(lowBarTree);
-				mainAutoNode.addChild(new T20AutoCommandHoodToOffsetAuto());
 				rollOutSender = true;
 			} else {
 				mainAutoNode.addChild(crossBAndD);
@@ -348,7 +347,6 @@ public class AutoModes extends Scorpio {
 		case 3:
 			if (doExtend) {
 				mainAutoNode.addChild(lowBarTree);
-				mainAutoNode.addChild(new T20AutoCommandHoodToOffsetAuto());
 				rollOutSender = true;
 			} else {
 				mainAutoNode.addChild(crossBAndD);
@@ -364,7 +362,6 @@ public class AutoModes extends Scorpio {
 		case 4:
 			if (doExtend) {
 				mainAutoNode.addChild(lowBarTree);
-				mainAutoNode.addChild(new T20AutoCommandHoodToOffsetAuto());
 				rollOutSender = true;
 			} else {
 				mainAutoNode.addChild(crossBAndD);
@@ -380,7 +377,6 @@ public class AutoModes extends Scorpio {
 		case 5:
 			if (doExtend) {
 				mainAutoNode.addChild(lowBarTree);
-				mainAutoNode.addChild(new T20AutoCommandHoodToOffsetAuto());
 				rollOutSender = true;
 			} else {
 				mainAutoNode.addChild(crossBAndD);

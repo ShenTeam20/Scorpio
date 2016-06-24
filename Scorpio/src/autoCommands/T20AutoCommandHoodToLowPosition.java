@@ -16,11 +16,15 @@ public class T20AutoCommandHoodToLowPosition extends Scorpio implements T20Comma
 		if (isFinished) {
 			return;
 		}
-
 		if (!isStarted) {
 			isStarted = !isStarted;
 		}
-		isFinished = true;
+		if (!hood.getHoodHomeSensor()) {
+			isFinished = true;
+		} else {
+			hood.hoodIsActuallyHomed = false;
+			hood.hoodHomeWatchDog();
+		}
 	}
 
 	@Override

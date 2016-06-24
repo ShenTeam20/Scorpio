@@ -18,7 +18,9 @@ public class DriverControls extends Scorpio {
 	private long mills = 0;
 
 	public void driverControls() {
-		if (Math.abs(driverJoy.getAxisTrigger()) > 0.2 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
+		System.out.println(
+				"One side " + drivetrain.getLeftSideEncVal() + "   other side " + drivetrain.getRightSideEncVal());
+		if (Math.abs(driverJoy.getAxisTrigger()) > 0.05 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			drivetrain.setRobotCentric();
 			heading = drivetrain.getHeading();
 			mills = System.currentTimeMillis() + 200;

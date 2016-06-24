@@ -327,6 +327,7 @@ public class VisionTargeting2 extends Scorpio {
 		 * System.out.println(" " + angle);
 		 * 
 		 */
+		
 		double hoodOffsetRatio = 0.61;
 		// Adjust values to adjust the sights!
 		double hoodZeroPoint = -700; // ticks

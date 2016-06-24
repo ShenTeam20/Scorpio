@@ -15,9 +15,13 @@ public class Indexer extends Scorpio {
 	public Indexer() {
 	}
 
-	public void intakeIndexer() {
-		indexerTalon.set(-1);
-		isIntaking = true;
+	public void intakeIndexer(boolean shouldStop) {
+		indexerTalon.set(-.7);
+		if (shouldStop) {
+			isIntaking = true;
+		} else {
+			isIntaking = false;
+		}
 	}
 
 	public void backdriveIndexer() {

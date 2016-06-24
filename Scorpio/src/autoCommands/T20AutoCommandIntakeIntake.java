@@ -22,7 +22,7 @@ public class T20AutoCommandIntakeIntake extends Scorpio implements T20Command {
 			isStarted = !isStarted;
 		}
 		lance.intakeLance();
-		indexer.intakeIndexer();
+		indexer.intakeIndexer(true);
 		indexer.indexerBumpSwitchWatchDog();
 		if (indexer.getIndexerBumpSwitch()) {
 			this.isFinished = true;

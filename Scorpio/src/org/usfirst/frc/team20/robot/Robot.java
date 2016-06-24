@@ -34,7 +34,10 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		Scorpio.vision.vision.processImage();
 		Scorpio.autoModes.executeMainAutoMode();
+	}
 
+	public void teleopInit() {
+		Scorpio.operator.hoodPositonHolder = Scorpio.hood.getHoodEnc();
 	}
 
 	public void teleopPeriodic() {

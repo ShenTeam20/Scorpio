@@ -16,8 +16,9 @@ public class Hood extends Scorpio {
 
 	private GeneralPIDExecutor autoTargetHoodPID = new GeneralPIDExecutor(-.2, .2, -125, 120, false);
 
-	public final double HOOD_POS_OUTERWORKS = -250000, HOOD_POS_BATTER = -310000, HOOD_POS_SAFE = -90000,
-			HOOD_POS_THE_6 = -290000, HOOD_POS_OFFSET_AUTO = 0, HOOD_POS_HOME = 1500;
+	// -307000
+	public final double HOOD_POS_OUTERWORKS = -260000, HOOD_POS_BATTER = -320000, HOOD_POS_SAFE = -90000,
+			HOOD_POS_THE_6 = -298000, HOOD_POS_OFFSET_AUTO = 0, HOOD_POS_HOME = 1500;
 
 	public boolean hoodIsActuallyHomed = false;
 	private double hoodOperationCurrentLimit = 10;
@@ -64,6 +65,10 @@ public class Hood extends Scorpio {
 
 	public boolean getHoodHomeState() {
 		return hoodTalon.homed;
+	}
+
+	public boolean getHoodHomeSensor() {
+		return hoodHomeSensor.get();
 	}
 
 	public void setHoodHomeState(boolean bool) {
