@@ -5,6 +5,7 @@ import org.usfirst.frc.team20.robot.Scorpio;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Indexer extends Scorpio {
 
@@ -19,6 +20,7 @@ public class Indexer extends Scorpio {
 		indexerTalon.set(-.7);
 		if (shouldStop) {
 			isIntaking = true;
+			SmartDashboard.putBoolean(" Collector", true);
 		} else {
 			isIntaking = false;
 		}
@@ -27,11 +29,13 @@ public class Indexer extends Scorpio {
 	public void backdriveIndexer() {
 		indexerTalon.set(1);
 		isIntaking = false;
+		SmartDashboard.putBoolean(" Collector", true);
 	}
 
 	public void stopIndexer() {
 		indexerTalon.set(0);
 		isIntaking = false;
+		SmartDashboard.putBoolean(" Collector", false);
 	}
 
 	public void indexerBumpSwitchWatchDog() {

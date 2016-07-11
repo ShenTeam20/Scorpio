@@ -45,6 +45,8 @@ public class Drivetrain extends Scorpio {
 	}
 
 	public void resetEncoders() {
+		masterLeft.setEncPosition(0);
+		masterRight.setEncPosition(0);
 		masterLeft.setPosition(0);
 		masterRight.setPosition(0);
 	}
@@ -188,6 +190,13 @@ public class Drivetrain extends Scorpio {
 
 	public double getRightSideEncVal() {
 		return masterRight.getEncPosition();
+	}
+
+	public void driveTrainStopMethod() {
+		masterLeft.changeControlMode(TalonControlMode.PercentVbus);
+		masterRight.changeControlMode(TalonControlMode.PercentVbus);
+		masterLeft.set(0);
+		masterRight.set(0);
 	}
 
 	public double getHeadingOffSet() {

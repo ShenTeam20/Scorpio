@@ -26,7 +26,7 @@ public class T20AutoCommandLanceWatchDog extends Scorpio implements T20Command {
 			lanceTimer.start();
 		}
 		lance.lanceMovementWatchDog();
-		if (lanceTimer.get() > .2) {
+		if (lanceTimer.get() > .1) {
 			lanceTimer.stop();
 			System.out.println("</Lance Is Watchdoging>");
 			this.isFinished = true;

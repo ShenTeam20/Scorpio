@@ -22,23 +22,24 @@ public class T20AutoCommandTurnToAngle extends Scorpio implements T20Command {
 		}
 
 		if (!isStarted) {
-			System.out.println("<Turn To Heading: " + this.heading + ">");
 			isStarted = !isStarted;
 			drivetrain.setFieldCentric();
 			heading = ahrs.ahrs.getAngle();
 			heading += angle;
+
 			if (heading > 360) {
 				heading -= 360;
 			}
 			if (heading < 0) {
 				heading += 360;
 			}
+			System.out.println("<Turn To Heading: " + this.heading + ">");
 		}
 
 		drivetrain.drive(0, this.heading);
 
 		if (Math.abs(heading - ahrs.ahrs.getAngle()) > 10) {
-			sysTime = System.currentTimeMillis();
+			sysTime = 0;
 		}
 
 		if (Math.abs(heading - ahrs.ahrs.getAngle()) < 10 && System.currentTimeMillis() > sysTime + 500) {

@@ -20,6 +20,7 @@ public class T20AutoCommandDriveStraightFeetLeft extends Scorpio implements T20C
 	@Override
 	public void execute() {
 		if (isFinished) {
+			drivetrain.resetEncoders();
 			return;
 		}
 
@@ -29,15 +30,28 @@ public class T20AutoCommandDriveStraightFeetLeft extends Scorpio implements T20C
 			drivetrain.setFieldCentric();
 			isStarted = !isStarted;
 			heading = ahrs.ahrs.getAngle();
-			this.startCount = drivetrain.getLeftSideEncVal();
-			this.encCount = (this.distanceInFeet * COUNT_TO_FEET_NUM);
+			this.encCount = (this.distanceInFeet * COUNT_TO_FEET_NUM) + Math.abs(drivetrain.getLeftSideEncVal());
 		}
-		drivetrain.drive(this.speed, this.heading);
-		if ((startCount - Math.abs(drivetrain.getLeftSideEncVal()) < this.encCount)) {
-			System.out.println(
-					"</Drive Straight At Speed: " + this.speed + " For Distance: " + this.distanceInFeet + ">");
+		heading = ahrs.ahrs.getAngle();
+		if ((this.speed == 1 || this.speed == -1) && Math.abs(drivetrain.getLeftSideEncVal()) >= this.encCount * .25) {
+			drivetrain.drive(this.speed * .75, this.heading);
+		} else if ((this.speed == 1 || this.speed == -1)
+				&& Math.abs(drivetrain.getLeftSideEncVal()) >= this.encCount * .50) {
+			drivetrain.drive(this.speed * .50, this.heading);
+		} else if ((this.speed == 1 || this.speed == -1)
+				&& Math.abs(drivetrain.getLeftSideEncVal()) >= this.encCount * .75) {
+			drivetrain.drive(this.speed * .25, this.heading);
+		} else if (((this.speed == 1 || this.speed == -1)
+				&& Math.abs(drivetrain.getLeftSideEncVal()) <= this.encCount * .25)
+				|| (this.speed < 1 && this.speed > -1)) {
+			drivetrain.drive(this.speed, this.heading);
+		}
+		if (Math.abs(drivetrain.getLeftSideEncVal()) >= this.encCount) {
+			System.out.println("</Drive Straight At Speed: " + this.speed + " For Distance: " + this.distanceInFeet
+					+ ">" + " encCount" + this.encCount + " startCount" + this.startCount);
 			drivetrain.drive(0, this.heading);
-			this.isFinished = true;
+			if (ahrs.ahrs.getAngle() < this.heading + 10 && ahrs.ahrs.getAngle() > this.heading - 10)
+				this.isFinished = true;
 		}
 	}
 

@@ -19,7 +19,9 @@ public class DriverControls extends Scorpio {
 
 	public void driverControls() {
 		System.out.println(
-				"One side " + drivetrain.getLeftSideEncVal() + "   other side " + drivetrain.getRightSideEncVal());
+				"One side " + drivetrain.getLeftSideEncVal() + " other side " + drivetrain.getRightSideEncVal());
+
+		// System.out.println(" navX" + ahrs.ahrs.getAngle());
 		if (Math.abs(driverJoy.getAxisTrigger()) > 0.05 && drivetrain.driveMode != driveModes.CAMERA_TARGET) {
 			drivetrain.setRobotCentric();
 			heading = drivetrain.getHeading();

@@ -43,7 +43,6 @@ public class Flywheel extends Scorpio {
 	}
 
 	public double getSpeed() {
-		System.out.println("Flywheel RPM: " + (flywheelTalon.getSpeed() * 72) / 22);
 		return (flywheelTalon.getSpeed() * 72) / 22;
 	}
 

@@ -18,7 +18,7 @@ public class Hood extends Scorpio {
 
 	// -307000
 	public final double HOOD_POS_OUTERWORKS = -260000, HOOD_POS_BATTER = -320000, HOOD_POS_SAFE = -90000,
-			HOOD_POS_THE_6 = -298000, HOOD_POS_OFFSET_AUTO = 0, HOOD_POS_HOME = 1500;
+			HOOD_POS_THE_6 = -297000, HOOD_POS_OFFSET_AUTO = 0, HOOD_POS_HOME = 1500;
 
 	public boolean hoodIsActuallyHomed = false;
 	private double hoodOperationCurrentLimit = 10;

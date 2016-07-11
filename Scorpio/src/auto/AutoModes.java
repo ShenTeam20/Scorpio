@@ -1,6 +1,7 @@
 package auto;
 
 import org.usfirst.frc.team20.robot.Scorpio;
+import org.usfirst.frc.team20.robot.Team20Libraries.T20Command;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20Node;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20ParallelNode;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20SeriesNode;
@@ -162,6 +163,43 @@ public class AutoModes extends Scorpio {
 		lowBarTree.execute();
 	}
 
+	private T20Node batterAutoTree;
+
+	/**
+	 * Drives the robot through the batter and high goals<br>
+	 * <br>
+	 * 
+	 * @return a batter high goal auto
+	 */
+
+	public void createPosThreeBatterAuto() {
+		batterAutoTree = new T20SeriesNode();
+		batterAutoTree.addChild(new T20AutoCommandLanceWatchDog());
+		batterAutoTree.addChild(new T20AutoCommandDriveStraightFeetLeft(.5, 11));
+		batterAutoTree.addChild(new T20AutoCommandTurnToAngle(30));
+		batterAutoTree.addChild(new T20AutoCommandDriveStraightFeetLeft(.3, 2));
+		batterAutoTree.addChild(new T20AutoCommandTurnToAngle(-30));
+		batterAutoTree.addChild(new T20AutoCommandDriveStraightFeetLeft(.3, 5.7));
+		T20Node startShot = new T20ParallelNode();
+		createAutoBotsTransformRollOut();
+		startShot.addChild(rollOutTree);
+		startShot.addChild(new T20AutoCommandFlywheelToSpeed(flywheel.FLYSPEED_OUTERWORKS));
+		batterAutoTree.addChild(startShot);
+		batterAutoTree.addChild(new T20AutoCommandHoodTo610Position());
+		batterAutoTree.addChild(new T20AutoCommandIntakeIntake());
+	}
+
+	/**
+	 * Drives the robot through the low bar and high goals<br>
+	 * <br>
+	 * 
+	 * @return a batter high goal auto
+	 */
+
+	public void executePosThreeBatterAuto() {
+		batterAutoTree.execute();
+	}
+
 	private T20Node lowBarHighGoalTree;
 
 	/**
@@ -209,13 +247,9 @@ public class AutoModes extends Scorpio {
 		T20Node turnRollOut = new T20ParallelNode();
 		if (!hasRolledOut)
 			turnRollOut.addChild(specialRollOutTree);
-		turnRollOut.addChild(new T20AutoCommandTurnToAngle(turnAngle));
 		turnRollOut.addChild(new T20AutoCommandFlywheelToSpeed(2000));
+		turnRollOut.addChild(new T20AutoCommandHoodToOuterworksPosition());
 		finishWithAHighGoalTree.addChild(turnRollOut);
-		T20Node autoTargetTree = new T20ParallelNode();
-		autoTargetTree.addChild(new T20AutoAutoTarget());
-		autoTargetTree.addChild(jostleTree);
-		finishWithAHighGoalTree.addChild(autoTargetTree);
 	}
 
 	/**
@@ -240,7 +274,7 @@ public class AutoModes extends Scorpio {
 
 	public void createTestTree() {
 		testTree = new T20SeriesNode();
-		testTree.addChild(new T20AutoCommandDriveStraightFeetLeft(.3, 1));
+		testTree.addChild(new T20AutoCommandTurnToAngle(180));
 
 	}
 
@@ -316,6 +350,7 @@ public class AutoModes extends Scorpio {
 		boolean rollOutSender = false;
 		createAutoBotsTransformConceal();
 		createAutoBotsTransformRollOut();
+		createPosThreeBatterAuto();
 		createCrossBAndD(1, 3, ahrs.ahrs.getAngle());
 		createLowBar();
 		createLowBarHighGoal();
@@ -349,14 +384,22 @@ public class AutoModes extends Scorpio {
 				mainAutoNode.addChild(lowBarTree);
 				rollOutSender = true;
 			} else {
-				mainAutoNode.addChild(crossBAndD);
-
+				// mainAutoNode.addChild(crossBAndD);
+				mainAutoNode.addChild(new T20AutoCommandDriveStraightFeetLeft(.5, 11));
+				mainAutoNode.addChild(new T20AutoCommandDriveStraightTime(0, .2));
 			}
 			if (shouldHighGoal) {
-				mainAutoNode.addChild(new T20AutoCommandTurnToAngle(this.initialHeading));
-				mainAutoNode.addChild(new T20AutoCommandDriveStraightTime(-1, .8));
-				createfinishWithAHighGoal(rollOutSender, 0, 5);
+				// mainAutoNode.addChild(new
+				// T20AutoCommandTurnToAngle(this.initialHeading));
+				// mainAutoNode.addChild(new
+				// T20AutoCommandDriveStraightTime(-1,
+				// .8));
+				mainAutoNode.addChild(new T20AutoCommandDriveStraightFeetLeft(-.2, -2));
+				mainAutoNode.addChild(new T20AutoCommandDriveStraightTime(0, .2));
+				mainAutoNode.addChild(new T20AutoCommandTurnToAngle(6));
+				createfinishWithAHighGoal(rollOutSender, 6, 0);
 				mainAutoNode.addChild(finishWithAHighGoalTree);
+
 			}
 			break;
 		case 4:
@@ -388,6 +431,13 @@ public class AutoModes extends Scorpio {
 				mainAutoNode.addChild(finishWithAHighGoalTree);
 			}
 			break;
+		case 15:
+			mainAutoNode.addChild(testTree);
+
+			break;
+		case 18:
+			mainAutoNode.addChild(batterAutoTree);
+			break;
 		case 20:
 			mainAutoNode.addChild(systemCheckTree);
 			break;
@@ -395,6 +445,7 @@ public class AutoModes extends Scorpio {
 			mainAutoNode.addChild(new T20AutoCommandDoNothing());
 			break;
 		}
+		mainAutoNode.addChild(new T20AutoCommandRobotShutdown());
 	}
 
 	public void executeMainAutoMode() {

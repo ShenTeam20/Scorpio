@@ -3,8 +3,7 @@ package org.usfirst.frc.team20.robot;
 import org.usfirst.frc.team20.robot.Team20Libraries.AHRSGyro;
 import org.usfirst.frc.team20.robot.Team20Libraries.VisionThread;
 
-import auto.AutoModes;
-import auto.SmartDashAutoChooser;
+import auto.AutoModesV2;
 import subsystems.Drivetrain;
 import subsystems.Flashlight;
 import subsystems.Flywheel;
@@ -35,8 +34,7 @@ public class Scorpio {
 	protected static AHRSGyro ahrs = new AHRSGyro(); // Done
 
 	// Auto
-	protected static SmartDashAutoChooser smartDashAutoChooser = new SmartDashAutoChooser(); // DONE
-	protected static AutoModes autoModes = new AutoModes();
+	protected static AutoModesV2 autoModes = new AutoModesV2();
 
 	// Human Controls
 	protected static OperatorControls operator = new OperatorControls(); // Done
