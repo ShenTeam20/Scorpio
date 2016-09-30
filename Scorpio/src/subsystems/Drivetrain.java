@@ -7,7 +7,6 @@ import org.usfirst.frc.team20.robot.Team20Libraries.T20CANTalon;
 
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain extends Scorpio {
 	private final double scaling = 8500;

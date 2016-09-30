@@ -4,7 +4,6 @@ import org.usfirst.frc.team20.robot.Scorpio;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20Command;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 
 public class T20AutoCommandRobotShutdown extends Scorpio implements T20Command {
 	private boolean isFinished, isStarted;

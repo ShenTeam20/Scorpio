@@ -1,7 +1,6 @@
 package auto;
 
 import org.usfirst.frc.team20.robot.Scorpio;
-import org.usfirst.frc.team20.robot.Team20Libraries.T20Command;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20Node;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20ParallelNode;
 import org.usfirst.frc.team20.robot.Team20Libraries.T20SeriesNode;
