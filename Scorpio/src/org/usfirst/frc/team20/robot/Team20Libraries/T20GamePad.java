@@ -185,7 +185,7 @@ public class T20GamePad {
 	 *         degrees Clock-Wise
 	 */
 
-	public int getPOV() {
+	public int getPOV() { // D-Pad or Direction Pad
 		return joystick.getPOV();
 	}
 
@@ -235,7 +235,7 @@ public class T20GamePad {
 	 * 
 	 * @return boolean True if Button Left Bumper is pressed.
 	 */
-	public boolean getButtonLB() {
+	public boolean getButtonLB() { // Left Bumper
 		return joystick.getRawButton(this.buttLB);
 	}
 
@@ -245,7 +245,7 @@ public class T20GamePad {
 	 * 
 	 * @return boolean True if Button Right Bumper is pressed.
 	 */
-	public boolean getButtonRB() {
+	public boolean getButtonRB() { // Right Bumper
 		return joystick.getRawButton(this.buttRB);
 	}
 
@@ -255,7 +255,7 @@ public class T20GamePad {
 	 * 
 	 * @return boolean True if Button Left Stick is pressed down.
 	 */
-	public boolean getButtonLS() {
+	public boolean getButtonLS() { // L3
 		return joystick.getRawButton(this.buttLStick);
 	}
 
@@ -265,7 +265,7 @@ public class T20GamePad {
 	 * 
 	 * @return boolean True if Button Right Stick is pressed down.
 	 */
-	public boolean getButtonRS() {
+	public boolean getButtonRS() { // R3
 		return joystick.getRawButton(this.buttRStick);
 	}
 
